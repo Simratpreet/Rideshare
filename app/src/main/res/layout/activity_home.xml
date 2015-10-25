@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="28sp"
+        android:id="@+id/text_interact"
+        android:text="RIDESHARE"
+        android:textStyle="bold"
+        android:elevation="4dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ridesharing"
+        android:scaleType="centerCrop" />
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:paddingLeft="16dp"-->
+        <!--android:paddingRight="16dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:textColor="@color/colorPrimary"-->
+        <!--android:textSize="20sp"-->
+        <!--android:id="@+id/text_money"-->
+        <!--android:text="Save your costs, afford pocket travel trips by saving money on your travel."/>-->
+
+
+
+</LinearLayout>
