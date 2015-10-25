@@ -10,19 +10,10 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,7 +28,6 @@ import com.facebook.GraphResponse;
 import com.facebook.LoggingBehavior;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -45,15 +35,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import com.simrat.myapplication.MyApplication;
 
 public class MainActivity extends Activity {
 
-    Typeface asap, pt_sans;
     private TextView shareRide, interact, info, money;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
@@ -81,11 +69,12 @@ public class MainActivity extends Activity {
 //        setSupportActionBar(toolbar);
         context = getApplicationContext();
 
-        pt_sans = Typeface.createFromAsset(getApplicationContext().getAssets(), "PT_Sans-Regular.ttf");
+
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
         //loginButton.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
-        loginButton.setTypeface(pt_sans);
+        loginButton.setTypeface(MyApplication.getPt_sans());
+
         //loginButton.setReadPermissions("user_profile");
         float fbIconScale = 1.30F;
         Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_fb_icon);
@@ -105,7 +94,7 @@ public class MainActivity extends Activity {
                 getApplication().getResources().getDimensionPixelSize(
                         R.dimen.fb_margin_override_bottom));
 
-        info = (TextView) findViewById(R.id.info);
+
 
         final List<String> permissions = new ArrayList<>();
         permissions.add("public_profile");
@@ -136,12 +125,11 @@ public class MainActivity extends Activity {
 
                 accessToken = loginResult.getAccessToken();
                 profile = Profile.getCurrentProfile();
-                info.setText(profile.getFirstName());
                 profile.getProfilePictureUri(80,80);
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 sharedPreferences.edit().putString("AccessToken", AccessToken.getCurrentAccessToken().toString()).commit();
                 accessToken = AccessToken.getCurrentAccessToken();
-                //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
+
                 GraphRequest request = GraphRequest.newMeRequest(
                         accessToken,
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -152,7 +140,6 @@ public class MainActivity extends Activity {
 
                                 try{
                                     String name = object.getString("first_name") + " " + object.getString("last_name");
-                                    //String about_me = object.getString("bio");
                                     String birthday = object.getString("birthday");
                                     String gender = object.getString("gender");
                                     String education = object.getString("education");
@@ -167,8 +154,6 @@ public class MainActivity extends Activity {
                                         String bitmapEncode = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
                                         sharedPreferences.edit().putString("ProfilePic", bitmapEncode).commit();
                                         Log.d("s1", bitmapEncode);
-//                                        profilePic = (ImageView) findViewById(R.id.profile_pic);
-//                                        profilePic.setImageBitmap(bitmap);
 
                                     }catch (Exception e){
                                         e.printStackTrace();
@@ -244,11 +229,11 @@ public class MainActivity extends Activity {
         shareRide = (TextView) findViewById(R.id.share_your_ride_textview);
         interact = (TextView) findViewById(R.id.interact_textview);
 
-        shareRide.setTypeface(pt_sans);
-        interact.setTypeface(pt_sans);
+        shareRide.setTypeface(MyApplication.getPt_sans());
+        interact.setTypeface(MyApplication.getPt_sans());
         interact = (TextView) findViewById(R.id.text_interact);
         money = (TextView) findViewById(R.id.text_money);
-        money.setTypeface(pt_sans);
+        money.setTypeface(MyApplication.getPt_sans());
         loginButton.setText("Sign In With Facebook");
     }
 

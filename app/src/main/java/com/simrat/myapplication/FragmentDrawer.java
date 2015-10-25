@@ -1,13 +1,10 @@
 package com.simrat.myapplication;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -27,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.simrat.myapplication.R;
 import com.simrat.myapplication.adapter.NavigationDrawerAdapter;
 import com.simrat.myapplication.model.NavDrawerItem;
 
@@ -39,21 +35,18 @@ import java.util.List;
 
 public class FragmentDrawer extends Fragment {
 
-    private static String TAG = FragmentDrawer.class.getSimpleName();
+
 
     private RecyclerView recyclerView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerAdapter adapter;
     private static String[] titles = null;
-    private static int[] icons = null;
     private View containerView;
     private FragmentDrawerListener drawerListener;
     SharedPreferences sharedPreferences;
     ImageView profilePic;
     TextView personName;
-    Typeface pt_sans;
-    private ImageView drawerListIcon;
 
     public FragmentDrawer(){
 
@@ -87,7 +80,6 @@ public class FragmentDrawer extends Fragment {
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawer_list);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        pt_sans = Typeface.createFromAsset(getContext().getAssets(), "PT_Sans-Regular.ttf");
         personName = (TextView) layout.findViewById(R.id.person_name);
         personName.setText(sharedPreferences.getString("Name", ""));
         Log.d("name", sharedPreferences.getString("Name", ""));

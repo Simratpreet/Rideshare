@@ -4,24 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.widget.TextView;
 
 
 public class Home extends Activity {
 
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 2000;
     SharedPreferences sharedPreferences;
-    TextView interact, money;
-    Typeface pt_sans;
     private GestureDetector gestureDetector;
 
     @Override
@@ -29,25 +23,12 @@ public class Home extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-//        interact = (TextView) findViewById(R.id.text_interact);
-//        money = (TextView) findViewById(R.id.text_money);
-//        pt_sans = Typeface.createFromAsset(getApplicationContext().getAssets(), "PT_Sans-Regular.ttf");
-//        interact.setTypeface(pt_sans);
-//        money.setTypeface(pt_sans);
-
-        //gestureDetector = new GestureDetector(new SwipeGestureDetector());
-
         new Handler().postDelayed(new Runnable() {
 
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo / company
-             */
 
             @Override
             public void run() {
-                // This method will be executed once the timer is over
-                // Start your app main activity
+
                 Intent i;
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String token = sharedPreferences.getString("AccessToken", "");

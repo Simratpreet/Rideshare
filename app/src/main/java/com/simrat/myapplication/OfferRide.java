@@ -1,23 +1,16 @@
 package com.simrat.myapplication;
 
 
-import android.content.res.Resources;
-import android.net.Uri;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -26,12 +19,7 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.simrat.android.SampleActivityBase;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class OfferRide extends Fragment {
 
     public static final String TAG = "SampleActivityBase";
@@ -40,17 +28,14 @@ public class OfferRide extends Fragment {
 
     private PlaceAutocompleteAdapter mAdapter;
 
-    private AutoCompleteTextView mAutocompleteView;
+    private AutoCompleteTextView mAutocompleteViewSource, mAutocompleteViewDest;
 
-    private TextView mPlaceDetailsText;
 
-    private TextView mPlaceDetailsAttribution;
-
-    private static final LatLngBounds BOUNDS_GREATER_SYDNEY = new LatLngBounds(
-            new LatLng(-34.041458, 150.790100), new LatLng(-33.682247, 151.383362));
+    private static final LatLngBounds BOUNDS_INDIA = new LatLngBounds(
+            new LatLng(21.000000, 78.000000), new LatLng(21.000000, 78.000000));
 
     public OfferRide() {
-        // Required empty public constructor
+
     }
 
 
@@ -65,30 +50,24 @@ public class OfferRide extends Fragment {
                 .build();
 
         // Retrieve the AutoCompleteTextView that will display Place suggestions.
-        mAutocompleteView = (AutoCompleteTextView)
-                view.findViewById(R.id.autocomplete_places);
+        mAutocompleteViewSource = (AutoCompleteTextView)
+                view.findViewById(R.id.autocomplete_places_source);
+        mAutocompleteViewDest = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_places_destination);
 
         // Register a listener that receives callbacks when a suggestion has been selected
-        mAutocompleteView.setOnItemClickListener(mAutocompleteClickListener);
+        mAutocompleteViewSource.setOnItemClickListener(mAutocompleteClickListener);
+        mAutocompleteViewDest.setOnItemClickListener(mAutocompleteClickListener);
 
-        // Retrieve the TextViews that will display details and attributions of the selected place.
-        mPlaceDetailsText = (TextView) view.findViewById(R.id.place_details);
-        mPlaceDetailsAttribution = (TextView) view.findViewById(R.id.place_attribution);
+        mAutocompleteViewSource.setTypeface(MyApplication.getPt_sans());
+        mAutocompleteViewDest.setTypeface(MyApplication.getPt_sans());
 
         // Set up the adapter that will retrieve suggestions from the Places Geo Data API that cover
         // the entire world.
         mAdapter = new PlaceAutocompleteAdapter(getContext(), android.R.layout.simple_list_item_1,
-                mGoogleApiClient, BOUNDS_GREATER_SYDNEY, null);
-        mAutocompleteView.setAdapter(mAdapter);
+                mGoogleApiClient, BOUNDS_INDIA, null);
+        mAutocompleteViewSource.setAdapter(mAdapter);
+        mAutocompleteViewDest.setAdapter(mAdapter);
 
-        // Set up the 'clear text' button that clears the text in the autocomplete view
-        Button clearButton = (Button) view.findViewById(R.id.button_clear);
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAutocompleteView.setText("");
-            }
-        });
         return view;
     }
 
@@ -113,9 +92,6 @@ public class OfferRide extends Fragment {
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
 
-            Toast.makeText(getContext(), "Clicked: " + item.description,
-                    Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Called getPlaceById to get Place details for " + item.placeId);
         }
     };
 
@@ -136,34 +112,12 @@ public class OfferRide extends Fragment {
             // Get the Place object from the buffer.
             final Place place = places.get(0);
 
-            // Format details of the place for display and show it in a TextView.
-            mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(),
-                    place.getId(), place.getAddress(), place.getPhoneNumber(),
-                    place.getWebsiteUri()));
-
-            // Display the third party attributions if set.
-            final CharSequence thirdPartyAttribution = places.getAttributions();
-            if (thirdPartyAttribution == null) {
-                mPlaceDetailsAttribution.setVisibility(View.GONE);
-            } else {
-                mPlaceDetailsAttribution.setVisibility(View.VISIBLE);
-                mPlaceDetailsAttribution.setText(Html.fromHtml(thirdPartyAttribution.toString()));
-            }
-
-            Log.i(TAG, "Place details received: " + place.getName());
+            // Format details of the place for display and show it in a TextView
 
             places.release();
         }
     };
 
-    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id,
-                                              CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
-        Log.e(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-
-    }
     @Override
     public void onStart() {
         super.onStart();
@@ -176,22 +130,6 @@ public class OfferRide extends Fragment {
         super.onStop();
     }
 
-    /**
-     * Called when the Activity could not connect to Google Play services and the auto manager
-     * could resolve the error automatically.
-     * In this case the API is not available and notify the user.
-     *
-     * @param connectionResult can be inspected to determine the cause of the failure
-     */
-//    @Override
-//    public void onConnectionFailed(ConnectionResult connectionResult) {
-//
-//        Log.e(TAG, "onConnectionFailed: ConnectionResult.getErrorCode() = "
-//                + connectionResult.getErrorCode());
-//
-//        // TODO(Developer): Check error code and notify the user of error state and resolution.
-//
-//    }
 
 
 }

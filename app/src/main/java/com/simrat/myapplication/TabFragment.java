@@ -14,9 +14,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by simrat on 24/10/15.
- */
+
 public class TabFragment extends Fragment {
 
     private TabLayout tabLayout;

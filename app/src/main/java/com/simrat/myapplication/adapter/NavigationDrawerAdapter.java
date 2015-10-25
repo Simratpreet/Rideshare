@@ -47,15 +47,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         NavDrawerItem current = data.get(position);
         holder.title.setText(current.getTitle());
         holder.drawerListIcon.setImageResource(icons.getResourceId(position, -1));
-//        if(current.getTitle() == "Home")
-//            holder.drawerListIcon.setImageResource(R.drawable.home_icon);
-//        else if(current.getTitle() == "My Rides")
-//            holder.drawerListIcon.setImageResource(R.drawable.car_icon);
-//        else if(current.getTitle() == "Profile")
-//            holder.drawerListIcon.setImageResource(R.drawable.account_icon);
-//        else if(current.getTitle() == "Settings")
-//            holder.drawerListIcon.setImageResource(R.drawable.settings_icon);
-//        else holder.drawerListIcon.setImageResource(R.drawable.logout_icon);
+
     }
 
     @Override
