@@ -1,15 +1,19 @@
 package com.simrat.myapplication;
 
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -19,6 +23,11 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
+import java.util.Calendar;
 
 public class OfferRide extends Fragment {
 
@@ -27,9 +36,12 @@ public class OfferRide extends Fragment {
     protected GoogleApiClient mGoogleApiClient;
 
     private PlaceAutocompleteAdapter mAdapter;
-
+    Calendar now;
+    DatePickerDialog.OnDateSetListener date;
+    TimePickerDialog.OnTimeSetListener time;
+    private TextView fromText,toText,selectText;
     private AutoCompleteTextView mAutocompleteViewSource, mAutocompleteViewDest;
-
+    private EditText datetime;
 
     private static final LatLngBounds BOUNDS_INDIA = new LatLngBounds(
             new LatLng(21.000000, 78.000000), new LatLng(21.000000, 78.000000));
@@ -49,11 +61,18 @@ public class OfferRide extends Fragment {
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
 
+        fromText = (TextView) view.findViewById(R.id.from_text);
+        toText = (TextView) view.findViewById(R.id.to_text);
+        selectText = (TextView) view.findViewById(R.id.selectdatetimetext);
+        fromText.setTypeface(MyApplication.getPt_sans());
+        toText.setTypeface(MyApplication.getPt_sans());
+        selectText.setTypeface(MyApplication.getPt_sans());
         // Retrieve the AutoCompleteTextView that will display Place suggestions.
         mAutocompleteViewSource = (AutoCompleteTextView)
                 view.findViewById(R.id.autocomplete_places_source);
         mAutocompleteViewDest = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_places_destination);
-
+        datetime = (EditText) view.findViewById(R.id.datetime);
+        datetime.setTypeface(MyApplication.getPt_sans());
         // Register a listener that receives callbacks when a suggestion has been selected
         mAutocompleteViewSource.setOnItemClickListener(mAutocompleteClickListener);
         mAutocompleteViewDest.setOnItemClickListener(mAutocompleteClickListener);
@@ -67,10 +86,88 @@ public class OfferRide extends Fragment {
                 mGoogleApiClient, BOUNDS_INDIA, null);
         mAutocompleteViewSource.setAdapter(mAdapter);
         mAutocompleteViewDest.setAdapter(mAdapter);
+        datetime.setKeyListener(null);
+        datetime.setClickable(true);
+        now = Calendar.getInstance();
+        date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+                now.set(Calendar.YEAR, year);
+                now.set(Calendar.MONTH, monthOfYear);
+                now.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                TimePickerDialog t = TimePickerDialog.newInstance(time, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), false);
+                t.show(getActivity().getFragmentManager(), "TimePicker");
+                String month = getMonth(monthOfYear);
+                String date = dayOfMonth + " " + month + " " + year;
+                datetime.setText(date);
+            }
+        };
+//        new DatePickerDialog.OnDateChangedListener(){
+//            @Override
+//            public void onDateChanged() {
+//                TimePickerDialog t = TimePickerDialog.newInstance(time, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), false);
+//                t.show(getActivity().getFragmentManager(), "TimePicker");
+//            }
+//        };
+        time = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
+                now.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                now.set(Calendar.MINUTE, minute);
+                String min = Integer.toString(minute);
+                if(minute < 10)
+                    min = "0" + minute;
+                int hours = hourOfDay % 12;
+                String am_pm;
+                if(hourOfDay < 12)
+                    am_pm = "AM";
+                else am_pm = "PM";
+                String time = " - " + hours + " : " + min + " " + am_pm;
+                datetime.append(time);
+            }
+        };
+        datetime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog d = DatePickerDialog.newInstance(date, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+                d.show(getActivity().getFragmentManager(), "DatePicker");
 
+            }
+        });
         return view;
     }
+    private String getMonth(int m){
+        switch (m){
+            case 0:
+                return "Jan";
+            case 1:
+                return "Feb";
+            case 2:
+                return "Mar";
+            case 3:
+                return "Apr";
+            case 4:
+                return "May";
+            case 5:
+                return "June";
+            case 6:
+                return "July";
+            case 7:
+                return "Aug";
+            case 8:
+                return "Sep";
+            case 9:
+                return "Oct";
+            case 10:
+                return "Nov";
+            case 11:
+                return "Dec";
 
+            default:
+                break;
+        }
+        return null;
+    }
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
         @Override
@@ -117,6 +214,12 @@ public class OfferRide extends Fragment {
             places.release();
         }
     };
+
+
+    private void setUpDateTimeDialog(){
+
+
+    }
 
     @Override
     public void onStart() {

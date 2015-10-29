@@ -12,23 +12,74 @@
         android:paddingRight="@dimen/horizontal_page_margin"
         android:paddingTop="@dimen/vertical_page_margin">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@color/colorAccent"
+            android:layout_marginBottom="10dp"
+            android:text="SELECT SOURCE AND DESTINATION"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:text="FROM"
+            android:textSize="18sp"
+            android:layout_marginBottom="4dp"
+            android:id="@+id/from_text"/>
         <AutoCompleteTextView
             android:id="@+id/autocomplete_places_source"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_gravity="center_horizontal"
             android:hint="Enter your source"
+            android:layout_marginBottom="24dp"
             android:textColor="@color/colorPrimary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:text="TO"
+            android:textSize="18sp"
+            android:layout_marginBottom="4dp"
+            android:id="@+id/to_text"/>
         <AutoCompleteTextView
             android:id="@+id/autocomplete_places_destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:layout_gravity="center_horizontal"
             android:hint="Enter your destination"
             android:textColor="@color/colorPrimary" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/colorPrimary" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SELECT TIME OF YOUR JOURNEY"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"
+            android:id="@+id/selectdatetimetext"/>
+        <EditText
+            android:id="@+id/datetime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:hint="Journey Date and Time"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorPrimaryText"
+            android:drawableLeft="@drawable/ic_timetable"
+            android:textSize="20sp"
+            android:drawablePadding="16dp"
+            android:textColor="@color/colorPrimary"
+            android:clickable="true"/>
 
     </LinearLayout>
 </ScrollView>

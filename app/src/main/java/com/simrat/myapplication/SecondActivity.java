@@ -1,7 +1,10 @@
 package com.simrat.myapplication;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -36,7 +39,7 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+
 
 
 
@@ -45,6 +48,12 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
         title.setTypeface(MyApplication.getPt_sans());
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+        else
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
+
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 

@@ -80,7 +80,8 @@
             android:text="@string/fb_msg"
             android:gravity="center_horizontal"
             android:textColor="@color/colorPrimaryText"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:layout_marginBottom="10dp"/>
 
     </LinearLayout>
 </LinearLayout>
