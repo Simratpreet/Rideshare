@@ -16,19 +16,21 @@ import java.security.NoSuchAlgorithmException;
 
 public class MyApplication extends Application {
 
-    private static Typeface pt_sans;
+    private static Typeface pt_sans, squada_one;
 
     @Override
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(getApplicationContext());
         pt_sans = Typeface.createFromAsset(getApplicationContext().getAssets(), "PT_Sans-Regular.ttf");
+        squada_one = Typeface.createFromAsset(getApplicationContext().getAssets(), "SquadaOne-Regular.ttf");
         printKeyHash();
     }
 
     public static Typeface getPt_sans(){
         return pt_sans;
     }
+    public static Typeface getSquada_one() { return squada_one; }
 
     public void printKeyHash() {
         try {

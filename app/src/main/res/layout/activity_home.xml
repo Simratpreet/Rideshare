@@ -1,40 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:gravity="center_horizontal"
+    android:paddingTop="32dp"
+    android:background="@drawable/back_gradient">
 
+    <TextView
+        android:id="@+id/logoText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:text="RIDESHARE"
+        android:layout_marginTop="50dp"
+        android:translationZ="2dp"
+        android:textSize="64sp"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryText" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share your Ride"
+        android:gravity="center"
+        android:layout_below="@+id/logoText"
+        android:textSize="32sp"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/share_your_ride_textview"
+        android:textColor="@color/colorPrimaryText"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@+id/share_your_ride_textview"
+        android:background="@color/colorPrimaryText"
+        android:id="@+id/divider">
+
+    </View>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Interact with co-travellers"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:layout_below="@+id/divider"
+        android:id="@+id/interact_textview"
+        android:textColor="@color/colorPrimaryText"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_marginTop="16dp"
-        android:textColor="@color/colorPrimary"
-        android:textSize="28sp"
-        android:id="@+id/text_interact"
-        android:text="RIDESHARE"
-        android:textStyle="bold"
-        android:elevation="4dp"/>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ridesharing"
-        android:scaleType="centerCrop" />
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:gravity="center_horizontal"-->
-        <!--android:paddingLeft="16dp"-->
-        <!--android:paddingRight="16dp"-->
-        <!--android:layout_marginTop="16dp"-->
-        <!--android:textColor="@color/colorPrimary"-->
-        <!--android:textSize="20sp"-->
-        <!--android:id="@+id/text_money"-->
-        <!--android:text="Save your costs, afford pocket travel trips by saving money on your travel."/>-->
-
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@+id/interact_textview"
+        android:id="@+id/text_money"
+        android:text="Save your costs, afford pocket travel trips by saving money on your travel."/>
 
 
 </LinearLayout>

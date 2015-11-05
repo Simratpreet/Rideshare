@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.simrat.myapplication.adapter.NavigationDrawerAdapter;
@@ -37,6 +38,7 @@ public class FragmentDrawer extends Fragment {
 
 
 
+    private LinearLayout navHeader;
     private RecyclerView recyclerView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -79,6 +81,15 @@ public class FragmentDrawer extends Fragment {
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawer_list);
 
+        navHeader = (LinearLayout) layout.findViewById(R.id.nav_header_container);
+        navHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.closeDrawers();
+                getActivity().getSupportFragmentManager().beginTransaction().
+                        replace(R.id.container_body,new ProfileFragment()).commit();
+            }
+        });
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         personName = (TextView) layout.findViewById(R.id.person_name);
         personName.setText(sharedPreferences.getString("Name", ""));

@@ -9,8 +9,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/nav_header_container"
         android:layout_alignParentTop="true"
-        android:background="@color/colorAccent30Trans"
-        android:orientation="horizontal">
+        android:background="@color/colorAccent"
+        android:orientation="horizontal"
+        android:clickable="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"

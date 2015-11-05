@@ -1,0 +1,77 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativelayout"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorPrimary">
+
+    <ImageView
+        android:id="@+id/loc_image"
+        android:src="@drawable/map_marker"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="125dp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/myImageViewText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/loc_image"
+        android:text="RIDESHARE"
+        android:translationZ="2dp"
+        android:textSize="36sp"
+        android:textColor="@color/colorPrimaryText" />
+
+</RelativeLayout>
+
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical">-->
+
+    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginTop="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textColor="@color/colorPrimary"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textSize="28sp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/text_interact"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:text="RIDESHARE"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textStyle="bold"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:elevation="4dp"/>&ndash;&gt;-->
+    <!--<com.flaviofaria.kenburnsview.KenBurnsView-->
+        <!--android:id="@+id/image"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:src="@drawable/car_share" />-->
+    <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginLeft="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginRight="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="fill_parent"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginTop="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginBottom="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:src="@drawable/ridesharing"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:scaleType="centerCrop" />&ndash;&gt;-->
+    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:gravity="center_horizontal"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:paddingLeft="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:paddingRight="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginTop="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textColor="@color/colorPrimary"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textSize="20sp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/text_money"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:text="Save your costs, afford pocket travel trips by saving money on your travel."/>&ndash;&gt;-->
+
+
+
+<!--</LinearLayout>-->

@@ -9,20 +9,24 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 
 public class Home extends Activity {
 
-    private static int SPLASH_TIME_OUT = 2000;
+    private static int SPLASH_TIME_OUT = 3000;
+    private TextView shareRide, money, interact, logo;
     SharedPreferences sharedPreferences;
     private GestureDetector gestureDetector;
+    Animation fadeIn, move;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        findViews();
         new Handler().postDelayed(new Runnable() {
 
 
@@ -33,10 +37,9 @@ public class Home extends Activity {
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String token = sharedPreferences.getString("AccessToken", "");
                 Log.d("Token", token);
-                if(token == "") {
-                     i = new Intent(Home.this, MainActivity.class);
-                }
-                else {
+                if (token == "") {
+                    i = new Intent(Home.this, MainActivity.class);
+                } else {
                     i = new Intent(Home.this, SecondActivity.class);
                 }
                 startActivity(i);
@@ -46,69 +49,20 @@ public class Home extends Activity {
             }
         }, SPLASH_TIME_OUT);
     }
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        if (gestureDetector.onTouchEvent(event)) {
-//            return true;
-//        }
-//        return super.onTouchEvent(event);
-//    }
-//
-//    private void onLeftSwipe() {
-//        // Do something
-//        Intent i;
-//        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        String token = sharedPreferences.getString("AccessToken", "");
-//        Log.d("Token", token);
-//        if(token == "") {
-//            i = new Intent(Home.this, MainActivity.class);
-//        }
-//        else {
-//            i = new Intent(Home.this, SecondActivity.class);
-//        }
-//        startActivity(i);
-//
-//        // close this activity
-//        finish();
-//    }
-//
-//    private void onRightSwipe() {
-//        // Do something
-//    }
-//
-//    private class SwipeGestureDetector
-//            extends GestureDetector.SimpleOnGestureListener {
-//        // Swipe properties, you can change it to make the swipe
-//        // longer or shorter and speed
-//        private static final int SWIPE_MIN_DISTANCE = 120;
-//        private static final int SWIPE_MAX_OFF_PATH = 200;
-//        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-//
-//        @Override
-//        public boolean onFling(MotionEvent e1, MotionEvent e2,
-//                               float velocityX, float velocityY) {
-//            try {
-//                float diffAbs = Math.abs(e1.getY() - e2.getY());
-//                float diff = e1.getX() - e2.getX();
-//
-//                if (diffAbs > SWIPE_MAX_OFF_PATH)
-//                    return false;
-//
-//                // Left swipe
-//                if (diff > SWIPE_MIN_DISTANCE
-//                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-//                    Home.this.onLeftSwipe();
-//
-//                    // Right swipe
-//                } else if (-diff > SWIPE_MIN_DISTANCE
-//                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-//                    Home.this.onRightSwipe();
-//                }
-//            } catch (Exception e) {
-//                Log.e("YourActivity", "Error on gestures");
-//            }
-//            return false;
-//        }
-//    }
-}
 
+    private void findViews() {
+        shareRide = (TextView) findViewById(R.id.share_your_ride_textview);
+        interact = (TextView) findViewById(R.id.interact_textview);
+        logo = (TextView) findViewById(R.id.logoText);
+        move = AnimationUtils.loadAnimation(getApplication(), R.anim.move);
+        fadeIn = AnimationUtils.loadAnimation(getApplication(), R.anim.fade_in);
+        fadeIn = AnimationUtils.loadAnimation(getApplication(), R.anim.fade_in);
+        logo.startAnimation(fadeIn);
+
+        logo.setTypeface(MyApplication.getSquada_one());
+        shareRide.setTypeface(MyApplication.getPt_sans());
+        interact.setTypeface(MyApplication.getPt_sans());
+        money = (TextView) findViewById(R.id.text_money);
+        money.setTypeface(MyApplication.getPt_sans());
+    }
+}

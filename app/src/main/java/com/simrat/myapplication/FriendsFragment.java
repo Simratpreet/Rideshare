@@ -7,13 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by simrat on 24/10/15.
- */
+
 public class FriendsFragment extends Fragment{
 
     public FriendsFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -29,7 +27,7 @@ public class FriendsFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
 
 
-        // Inflate the layout for this fragment
+
         return rootView;
     }
 

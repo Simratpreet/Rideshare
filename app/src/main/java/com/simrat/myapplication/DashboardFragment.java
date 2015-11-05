@@ -49,6 +49,7 @@ public class DashboardFragment extends Fragment {
                 LoginManager.getInstance().logOut();
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
                 sharedPreferences.edit().remove("AccessToken").commit();
+                //sharedPreferences.edit().remove("ProfilePic").commit();
                 Intent i = new Intent(getActivity(), MainActivity.class);
                 startActivity(i);
                 getActivity().finish();
