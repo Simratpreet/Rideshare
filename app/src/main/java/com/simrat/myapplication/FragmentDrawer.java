@@ -93,8 +93,11 @@ public class FragmentDrawer extends Fragment {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         personName = (TextView) layout.findViewById(R.id.person_name);
         personName.setText(sharedPreferences.getString("Name", ""));
-        Log.d("name", sharedPreferences.getString("Name", ""));
+        Log.d("name2", sharedPreferences.getString("Name", ""));
+        //Bundle extras = getActivity().getIntent().getExtras();
+        //String profilePicBitmap = extras.getString("fb_dp");
         String profilePicBitmap = sharedPreferences.getString("ProfilePic", "");
+        Log.d("Encoding2", profilePicBitmap);
         byte[] decodedPic = Base64.decode(profilePicBitmap, Base64.DEFAULT);
         profilePic = (ImageView) layout.findViewById(R.id.profile_pic);
         profilePic.setImageBitmap(BitmapFactory.decodeByteArray(decodedPic, 0, decodedPic.length));

@@ -2,6 +2,7 @@ package com.simrat.myapplication;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +29,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -47,10 +49,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.simrat.myapplication.MyApplication;
 
 public class MainActivity extends Activity {
@@ -68,6 +81,7 @@ public class MainActivity extends Activity {
     SharedPreferences sharedPreferences;
     Animation fadeIn;
     Context context;
+    private String error;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,13 +161,13 @@ public class MainActivity extends Activity {
             public void onSuccess(LoginResult loginResult) {
 
                 accessToken = loginResult.getAccessToken();
-                Log.d("MOm", accessToken.toString());
+                Log.d("Login Token", accessToken.toString());
                 //profile = Profile.getCurrentProfile();
                 //profile.getProfilePictureUri(80, 80);
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 sharedPreferences.edit().putString("AccessToken", AccessToken.getCurrentAccessToken().toString()).commit();
                 accessToken = AccessToken.getCurrentAccessToken();
-
+                Log.d("Current Token", accessToken.toString());
                 GraphRequest request = GraphRequest.newMeRequest(
                         accessToken,
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -165,8 +179,8 @@ public class MainActivity extends Activity {
 
                                 try {
                                     name = object.getString("first_name") + " " + object.getString("last_name");
-                                    if(object.getString("birthday") != null)
-                                        birthday = object.getString("birthday");
+//                                    if(object.getString("birthday") != null)
+//                                        birthday = object.getString("birthday");
                                     gender = object.getString("gender");
                                     sharedPreferences.edit().putString("Gender", gender).commit();
                                     Log.d("Gender", gender);
@@ -180,22 +194,22 @@ public class MainActivity extends Activity {
                                       //      "work":[{"description":"Ruby On Rails Developer","employer":{"id":"1417363405233600","name":"mhire.in"},"location":{"id":"130646063637019","name":"Noida, India"},"position":{"id":"174691335892789","name":"Works at"},"start_date":"0000-00"}],
                                       // "location":{"id":"102161913158207","name":"Delhi, India"},
                                       // "education":[{"school":{"id":"143094462462512","name":"Maharaja Agrasen Institute of Technology"},"type":"College"}],"birthday":"12\/11\/1993"}
-                                    if(object.getString("education") != null) {
-                                        education = object.getString("education");
-                                        JSONArray arr = new JSONArray(education);
-                                        JSONObject ob = arr.getJSONObject(0);
-                                        education = ob.getJSONObject("school").getString("name");
-                                        Log.d("Education", education);
-                                        sharedPreferences.edit().putString("Education", education).commit();
-                                    }
-                                    if(object.getString("work") != null){
-                                        String work = object.getString("work");
-                                        JSONArray arr = new JSONArray(work);
-                                        JSONObject ob = arr.getJSONObject(0);
-                                        work = ob.getJSONObject("position").getString("name") + " " + ob.getJSONObject("employer").getString("name");
-                                        Log.d("Work", work);
-                                        sharedPreferences.edit().putString("Work", work).commit();
-                                    }
+//                                    if(object.getString("education") != null) {
+//                                        education = object.getString("education");
+//                                        JSONArray arr = new JSONArray(education);
+//                                        JSONObject ob = arr.getJSONObject(0);
+//                                        education = ob.getJSONObject("school").getString("name");
+//                                        Log.d("Education", education);
+//                                        sharedPreferences.edit().putString("Education", education).commit();
+//                                    }
+//                                    if(object.getString("work") != null){
+//                                        String work = object.getString("work");
+//                                        JSONArray arr = new JSONArray(work);
+//                                        JSONObject ob = arr.getJSONObject(0);
+//                                        work = ob.getJSONObject("position").getString("name") + " " + ob.getJSONObject("employer").getString("name");
+//                                        Log.d("Work", work);
+//                                        sharedPreferences.edit().putString("Work", work).commit();
+//                                    }
                                     Log.d("Details", object.toString());
                                     sharedPreferences.edit().putString("Name", name).commit();
                                     JSONObject location = new JSONObject(object.getString("location"));
@@ -208,7 +222,8 @@ public class MainActivity extends Activity {
                                         byte bitmapBytes[] = outputStream.toByteArray();
                                         String bitmapEncode = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
                                         sharedPreferences.edit().putString("ProfilePic", bitmapEncode).commit();
-                                        Log.d("s1", bitmapEncode);
+                                        Log.d("Encoding", bitmapEncode);
+//                                        Log.d("s1", bitmapEncode);
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -227,7 +242,10 @@ public class MainActivity extends Activity {
                 request.executeAsync();
 
 
+                //Bundle extras = new Bundle();
+                //extras.putString("fb_dp", sharedPreferences.getString("ProfilePic", ""));
                 Intent i = new Intent(MainActivity.this, SecondActivity.class);
+                //i.putExtras(extras);
                 startActivity(i);
                 finish();
             }
@@ -270,6 +288,145 @@ public class MainActivity extends Activity {
                 finish();
             }
         });
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setUpLogin();
+            }
+        });
+    }
+    private void setUpLogin(){
+        String email = emailText.getText().toString();
+        String password = passText.getText().toString();
+        if(!isValid(email, password))
+            return;
+        else {
+            ProgressDialog pDialog = new ProgressDialog(this);
+            pDialog.setMessage("Loading Please Wait ...");
+            LoginTask loginTask = new LoginTask(pDialog);
+            loginTask.execute(email, password);
+        }
+    }
+    private boolean isValid(String email, String password){
+
+        String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        Matcher matcher = pattern.matcher(email);
+        if(!matcher.matches()){
+            error = "Email must be like abc@example.com";
+            emailText.setError(error);
+            return false;
+        }
+        if(password.length() < 8 ){
+            error = "Password must be at least 8 characters long";
+            passText.setError(error);
+            return false;
+        }
+        return true;
+    }
+    private class LoginTask extends AsyncTask<String,Void,JSONObject>{
+        ProgressDialog progressDialog;
+        private String login_error;
+        public LoginTask(ProgressDialog progressDialog){
+            this.progressDialog = progressDialog;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            URL url;
+            HttpURLConnection urlConnection;
+            JSONObject holder = new JSONObject();
+            JSONObject user = new JSONObject();
+            String response = "";
+            JSONObject json = new JSONObject();
+
+
+            try {
+                json.put("success", false);
+                //json.put("info", "Something went wrong.. Retry !!");
+                user.put("email", params[0]);
+                user.put("password", params[1]);
+                holder.put("user",user);
+                StringBuilder sb = new StringBuilder(holder.toString());
+
+                url = new URL("https://shielded-earth-6986.herokuapp.com/users/sign_in");
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                urlConnection.setReadTimeout(15000);
+                urlConnection.setConnectTimeout(15000);
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestProperty("Accept", "application/json");
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+                urlConnection.connect();
+                OutputStream os = urlConnection.getOutputStream();
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
+                bw.write(holder.toString());
+                bw.flush();
+                bw.close();
+                os.close();
+
+                int responseCode = urlConnection.getResponseCode();
+                Log.d("Code", Integer.toString(responseCode));
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+
+                    while((line = br.readLine()) !=null) {
+                        response += line;
+
+                    }
+
+
+                    json = new JSONObject(response);
+                    sharedPreferences.edit().putString("Name", json.getJSONObject("data").getString("first_name") + " " +
+                            json.getJSONObject("data").getString("last_name")).commit();
+                    sharedPreferences.edit().putString("AuthToken", json.getJSONObject("data").getString("auth_token")).commit();
+                    Log.d("LoginAuthToken", json.getJSONObject("data").getString("auth_token"));
+                    Log.d("LoginAuth", sharedPreferences.getString("AuthToken", ""));
+                }
+                else {
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+
+                    while((line = br.readLine()) !=null) {
+                        response += line;
+
+                    }
+                    login_error = response.toString();
+                    Toast.makeText(getApplicationContext(), login_error, Toast.LENGTH_SHORT);
+                }
+
+            }catch (MalformedURLException e){
+
+            }catch (IOException e){
+
+            }catch (JSONException e){
+
+            }
+            Log.d("Response", response);
+            return json;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            progressDialog.hide();
+            Intent i = new Intent(MainActivity.this, SecondActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
     private void setUpDimen(){
         Display display = getWindowManager().getDefaultDisplay();

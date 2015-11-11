@@ -39,6 +39,7 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
         setContentView(R.layout.activity_second);
         findViews();
 
+
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -55,6 +56,8 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
 
         drawerFragment = (FragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+        //Bundle extras = getIntent().getExtras();
+        //drawerFragment.setArguments(extras);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(0);

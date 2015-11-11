@@ -36,8 +36,9 @@ public class Home extends Activity {
                 Intent i;
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String token = sharedPreferences.getString("AccessToken", "");
+                String authToken = sharedPreferences.getString("AuthToken", "");
                 Log.d("Token", token);
-                if (token == "") {
+                if (token == "" && authToken == "") {
                     i = new Intent(Home.this, MainActivity.class);
                 } else {
                     i = new Intent(Home.this, SecondActivity.class);

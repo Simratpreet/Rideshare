@@ -51,8 +51,11 @@ public class ProfileFragment extends Fragment {
         work.setTypeface(MyApplication.getPt_sans());
         location.setTypeface(MyApplication.getPt_sans());
 
-        gender.setText(sharedPreferences.getString("Gender", "").substring(0,1).toUpperCase() +
-                sharedPreferences.getString("Gender", "").substring(1) + ", " + sharedPreferences.getString("Age", "") + " years old");
+        if(sharedPreferences.getString("Gender", "") != "")
+            gender.setText(sharedPreferences.getString("Gender", "").substring(0,1).toUpperCase() +
+                    sharedPreferences.getString("Gender", "").substring(1) + ", "
+                    + sharedPreferences.getString("Age", "") + " years old");
+
         edu.setText(sharedPreferences.getString("Education", ""));
         work.setText(sharedPreferences.getString("Work", ""));
         location.setText(sharedPreferences.getString("Location", ""));
