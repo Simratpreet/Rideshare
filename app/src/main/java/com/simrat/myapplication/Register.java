@@ -2,6 +2,7 @@ package com.simrat.myapplication;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -34,6 +36,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -137,6 +140,11 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
         String password = passText.getText().toString();
         String gender = genderText.getText().toString();
         String city = locationText.getText().toString();
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
 
         if(!isValid(email, first_name, last_name, phone, password, gender, city))
             return;
@@ -199,6 +207,7 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
     private class SignUpTask extends AsyncTask<String, Void, JSONObject>{
         ProgressDialog progressDialog;
         private String signup_error;
+        private int responseCode;
 
         public  SignUpTask(ProgressDialog progressDialog){
             this.progressDialog = progressDialog;
@@ -252,9 +261,8 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
                 bw.close();
                 os.close();
 
-                int responseCode = urlConnection.getResponseCode();
+                responseCode = urlConnection.getResponseCode();
                 Log.d("Code", Integer.toString(responseCode));
-
                 if(responseCode == HttpURLConnection.HTTP_OK){
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -273,15 +281,16 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
                 else{
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-
+                    Log.d("In error", "yes");
                     while((line = br.readLine()) !=null) {
                         response += line;
-
+                        Log.d("Line", line);
                     }
                     signup_error = response.toString();
-                    Toast.makeText(getApplicationContext(), signup_error, Toast.LENGTH_SHORT);
-                }
+                    Log.d("Error", signup_error);
 
+                }
+                urlConnection.disconnect();
             }catch (MalformedURLException e){
 
             }catch (IOException e){
@@ -297,9 +306,20 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
             progressDialog.dismiss();
-            Intent i = new Intent(Register.this, SecondActivity.class);
-            startActivity(i);
-            finish();
+            if(responseCode == HttpURLConnection.HTTP_OK){
+                Intent i = new Intent(Register.this, SecondActivity.class);
+                startActivity(i);
+                finish();
+            }
+            else {
+                ErrorDialog dialog = new ErrorDialog();
+                Bundle args = new Bundle();
+                args.putString("error", "Email has already been taken.");
+                dialog.setArguments(args);
+                Log.d("ARgs", args.getString("error", ""));
+                dialog.setError();
+                dialog.show(getSupportFragmentManager(), "ErrorDialog");
+            }
         }
     }
 

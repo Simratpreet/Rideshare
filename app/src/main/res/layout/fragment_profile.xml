@@ -19,7 +19,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginBottom="8dp"
                 app:civ_border_width="0dp"
-                android:background="@drawable/profilepic"
+                android:background="@drawable/avatar"
                 app:civ_border_color="#FFFFFF"/>
 
             <TextView

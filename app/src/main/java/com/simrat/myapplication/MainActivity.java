@@ -2,6 +2,7 @@ package com.simrat.myapplication;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
@@ -26,6 +28,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -66,7 +69,7 @@ import java.util.regex.Pattern;
 
 import com.simrat.myapplication.MyApplication;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     private TextView shareRide, interact, info, money, logo;
     private TextView loginText, emailText, passText, orText, registerText, title;
@@ -298,6 +301,11 @@ public class MainActivity extends Activity {
     private void setUpLogin(){
         String email = emailText.getText().toString();
         String password = passText.getText().toString();
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
         if(!isValid(email, password))
             return;
         else {
@@ -329,6 +337,7 @@ public class MainActivity extends Activity {
     private class LoginTask extends AsyncTask<String,Void,JSONObject>{
         ProgressDialog progressDialog;
         private String login_error;
+        private int responseCode;
         public LoginTask(ProgressDialog progressDialog){
             this.progressDialog = progressDialog;
         }
@@ -376,7 +385,7 @@ public class MainActivity extends Activity {
                 bw.close();
                 os.close();
 
-                int responseCode = urlConnection.getResponseCode();
+                responseCode = urlConnection.getResponseCode();
                 Log.d("Code", Integer.toString(responseCode));
 
                 if(responseCode == HttpURLConnection.HTTP_OK){
@@ -405,9 +414,9 @@ public class MainActivity extends Activity {
 
                     }
                     login_error = response.toString();
-                    Toast.makeText(getApplicationContext(), login_error, Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(), login_error, Toast.LENGTH_SHORT).show();
                 }
-
+                urlConnection.disconnect();
             }catch (MalformedURLException e){
 
             }catch (IOException e){
@@ -423,9 +432,21 @@ public class MainActivity extends Activity {
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
             progressDialog.hide();
-            Intent i = new Intent(MainActivity.this, SecondActivity.class);
-            startActivity(i);
-            finish();
+            if(responseCode == HttpURLConnection.HTTP_OK){
+                Intent i = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(i);
+                finish();
+            }
+            else {
+                ErrorDialog dialog = new ErrorDialog();
+                Bundle args = new Bundle();
+                args.putString("error", "Invalid Email or Password.");
+                dialog.setArguments(args);
+                Log.d("ARgs", args.getString("error", ""));
+                dialog.setError();
+                dialog.show(getSupportFragmentManager(), "ErrorDialog");
+            }
+
         }
     }
     private void setUpDimen(){

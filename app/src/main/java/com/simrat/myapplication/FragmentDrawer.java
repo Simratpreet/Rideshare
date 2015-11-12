@@ -46,8 +46,8 @@ public class FragmentDrawer extends Fragment {
     private static String[] titles = null;
     private View containerView;
     private FragmentDrawerListener drawerListener;
-    SharedPreferences sharedPreferences;
-    ImageView profilePic;
+    static SharedPreferences sharedPreferences;
+    static ImageView profilePic;
     TextView personName;
 
     public FragmentDrawer(){
@@ -120,6 +120,11 @@ public class FragmentDrawer extends Fragment {
             }
         }));
         return layout;
+    }
+    public static void setProfilePic(){
+        String profilePicBitmap = sharedPreferences.getString("ProfilePic", "");
+        byte[] decodedPic = Base64.decode(profilePicBitmap, Base64.DEFAULT);
+        profilePic.setImageBitmap(BitmapFactory.decodeByteArray(decodedPic, 0, decodedPic.length));
     }
 
     @TargetApi(11)

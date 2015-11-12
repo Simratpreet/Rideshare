@@ -58,6 +58,11 @@
         <activity
             android:name=".Register">
         </activity>
+        <activity
+            android:name=".UploadProfilePic"
+            android:parentActivityName=".SecondActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

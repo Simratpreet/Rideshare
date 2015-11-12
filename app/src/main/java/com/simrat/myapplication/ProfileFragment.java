@@ -1,6 +1,7 @@
 package com.simrat.myapplication;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,8 +21,8 @@ public class ProfileFragment extends Fragment {
 
     private TextView personName, gender, edu, work, location, prefs;
     private Switch music, smoke, drink;
-    SharedPreferences sharedPreferences;
-    private ImageView profilePic;
+    static SharedPreferences sharedPreferences;
+    static private ImageView profilePic;
     public ProfileFragment() {
 
     }
@@ -73,6 +74,20 @@ public class ProfileFragment extends Fragment {
         smoke.setTypeface(MyApplication.getPt_sans());
         drink.setTypeface(MyApplication.getPt_sans());
 
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), UploadProfilePic.class);
+                startActivity(i);
+
+            }
+        });
+
+    }
+    public static void setProfilePic(){
+        String profilePicBitmap = sharedPreferences.getString("ProfilePic", "");
+        byte[] decodedPic = Base64.decode(profilePicBitmap, Base64.DEFAULT);
+        profilePic.setImageBitmap(BitmapFactory.decodeByteArray(decodedPic, 0, decodedPic.length));
     }
 
 
