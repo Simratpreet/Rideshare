@@ -2,9 +2,11 @@ package com.simrat.myapplication;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,6 +37,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.simrat.myapplication.data.RideshareDbHelper;
+import com.simrat.myapplication.data.UserContract.*;
+import com.simrat.myapplication.model.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,14 +60,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class Register extends FragmentActivity implements GenderFragment.GenderDialogListerner{
 
+    private String DEBUG_TAG = this.getClass().getName().toString();
     private EditText firstnameText, lastnameText,  emailText, passText, phoneText, genderText;
     private AutoCompleteTextView locationText;
     private TextView registerText, loginText;
     private Button registerButton;
     SharedPreferences sharedPreferences;
     private String error;
+    private RideshareDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +81,7 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
 
     }
     private void findViews(){
+        dbHelper = new RideshareDbHelper(getApplicationContext());
         registerText = (TextView) findViewById(R.id.registerText);
         firstnameText = (EditText) findViewById(R.id.firstnameText);
         lastnameText = (EditText) findViewById(R.id.lastnameText);
@@ -231,7 +240,6 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
 
             try {
                 json.put("success", false);
-                //json.put("info", "Something went wrong.. Retry !!");
                 user.put("email", params[0]);
                 user.put("first_name", params[1]);
                 user.put("last_name", params[2]);
@@ -240,7 +248,6 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
                 user.put("gender", params[5]);
                 user.put("city", params[6]);
                 holder.put("user",user);
-                StringBuilder sb = new StringBuilder(holder.toString());
 
                 url = new URL("https://shielded-earth-6986.herokuapp.com/users");
 
@@ -271,23 +278,26 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
                         response += line;
 
                     }
+                    json = new JSONObject(response);
 
                     sharedPreferences.edit().putString("Name", params[1] + " " + params[2]).commit();
-                    json = new JSONObject(response);
                     sharedPreferences.edit().putString("AuthToken", json.getJSONObject("data").getString("auth_token")).commit();
-                    Log.d("AuthToken", json.getJSONObject("data").getString("auth_token"));
-                    Log.d("Auth", sharedPreferences.getString("AuthToken", ""));
+                    Log.d(DEBUG_TAG, json.getJSONObject("data").getString("auth_token"));
+                    String token = json.getJSONObject("data").getString("auth_token");
+                    User u = new User(params[1], params[2], params[0], params[3], params[5], params[6]);
+                    u.setToken(token);
+                    dbHelper.addUser(u);
+
                 }
                 else{
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    Log.d("In error", "yes");
                     while((line = br.readLine()) !=null) {
                         response += line;
                         Log.d("Line", line);
                     }
                     signup_error = response.toString();
-                    Log.d("Error", signup_error);
+                    Log.d(DEBUG_TAG, signup_error);
 
                 }
                 urlConnection.disconnect();
@@ -298,7 +308,7 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
             }catch (JSONException e){
 
             }
-            Log.d("Response", response);
+            Log.d(DEBUG_TAG, response);
             return json;
         }
 
@@ -316,7 +326,6 @@ public class Register extends FragmentActivity implements GenderFragment.GenderD
                 Bundle args = new Bundle();
                 args.putString("error", "Email has already been taken.");
                 dialog.setArguments(args);
-                Log.d("ARgs", args.getString("error", ""));
                 dialog.setError();
                 dialog.show(getSupportFragmentManager(), "ErrorDialog");
             }

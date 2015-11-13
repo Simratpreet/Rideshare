@@ -43,17 +43,27 @@ public class DashboardFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         logoutButton = (Button) rootView.findViewById(R.id.logout_button);
+//        logoutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //LoginManager.getInstance().logOut();
+//                sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+//                sharedPreferences.edit().remove("AccessToken").commit();
+//                sharedPreferences.edit().remove("ProfilePic").commit();
+//                sharedPreferences.edit().clear().commit();
+//                Intent i = new Intent(getActivity(), MainActivity.class);
+//                startActivity(i);
+//                getActivity().finish();
+//            }
+//        });
+
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoginManager.getInstance().logOut();
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                sharedPreferences.edit().remove("AccessToken").commit();
-                sharedPreferences.edit().remove("ProfilePic").commit();
                 sharedPreferences.edit().clear().commit();
-                Intent i = new Intent(getActivity(), MainActivity.class);
-                startActivity(i);
                 getActivity().finish();
+                System.exit(0);
             }
         });
 

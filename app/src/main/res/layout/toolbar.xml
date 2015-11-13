@@ -17,4 +17,14 @@
         android:textSize="20sp"
         android:layout_marginLeft="0dp"
         android:textColor="@color/colorPrimaryText"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pencil"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:id="@+id/pencil"
+        android:layout_gravity="right"
+        android:clickable="true"
+        android:layout_centerVertical="true"/>
 </android.support.v7.widget.Toolbar>

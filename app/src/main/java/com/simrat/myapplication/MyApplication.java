@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
+import com.simrat.myapplication.model.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -17,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 public class MyApplication extends Application {
 
     private static Typeface pt_sans, squada_one;
+    private static User user;
 
     @Override
     public void onCreate() {

@@ -178,7 +178,7 @@ public class MainActivity extends FragmentActivity {
                             public void onCompleted(
                                     JSONObject object,
                                     GraphResponse response) {
-                                    String name, birthday, gender, education;
+                                String name, birthday, gender, education;
 
                                 try {
                                     name = object.getString("first_name") + " " + object.getString("last_name");
@@ -194,9 +194,9 @@ public class MainActivity extends FragmentActivity {
                                         Log.d("Age", age.getString("min"));
                                     }
                                     //Details: {"id":"185862431749702","name":"Simratpreet Singh","age_range":{"min":21},"first_name":"Simratpreet","email":"simrat@mhire.in","last_name":"Singh","gender":"male","link":"https:\/\/www.facebook.com\/app_scoped_user_id\/185862431749702\/",
-                                      //      "work":[{"description":"Ruby On Rails Developer","employer":{"id":"1417363405233600","name":"mhire.in"},"location":{"id":"130646063637019","name":"Noida, India"},"position":{"id":"174691335892789","name":"Works at"},"start_date":"0000-00"}],
-                                      // "location":{"id":"102161913158207","name":"Delhi, India"},
-                                      // "education":[{"school":{"id":"143094462462512","name":"Maharaja Agrasen Institute of Technology"},"type":"College"}],"birthday":"12\/11\/1993"}
+                                    //      "work":[{"description":"Ruby On Rails Developer","employer":{"id":"1417363405233600","name":"mhire.in"},"location":{"id":"130646063637019","name":"Noida, India"},"position":{"id":"174691335892789","name":"Works at"},"start_date":"0000-00"}],
+                                    // "location":{"id":"102161913158207","name":"Delhi, India"},
+                                    // "education":[{"school":{"id":"143094462462512","name":"Maharaja Agrasen Institute of Technology"},"type":"College"}],"birthday":"12\/11\/1993"}
 //                                    if(object.getString("education") != null) {
 //                                        education = object.getString("education");
 //                                        JSONArray arr = new JSONArray(education);

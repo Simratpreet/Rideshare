@@ -32,6 +32,7 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
     Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
     private TextView title;
+    private ImageView pencil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,10 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
         setContentView(R.layout.activity_second);
         findViews();
 
+//        Fragment f = getSupportFragmentManager().findFragmentById(R.id.container_body);
+//        if(f instanceof ProfileFragment){
+//            pencil.setVisibility(View.VISIBLE);
+//        }
 
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -70,8 +75,24 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
         //title.setText("Rideshare");
         title.setTypeface(MyApplication.getPt_sans());
         mToolbar.setTitle("");
-
+        pencil = (ImageView) findViewById(R.id.pencil);
+        pencil.setVisibility(View.INVISIBLE);
     }
+//    protected void onStart(){
+//        super.onStart();
+//        pencil.setVisibility(View.INVISIBLE);
+//    }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        pencil.setVisibility(View.INVISIBLE);
+//    }
+//    protected void onPause(){
+//        super.onPause();
+//        pencil.setVisibility(View.VISIBLE);
+//    }
+
     @TargetApi(21)
     private void setupWindowAnimations() {
         Transition fade = TransitionInflater.from(this).inflateTransition(R.transition.fade);
@@ -114,10 +135,15 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
         if(fragment != null){
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_body, fragment);
+            fragmentTransaction.replace(R.id.container_body, fragment, name);
             fragmentTransaction.commit();
 
             title.setText(name);
+//            Fragment f = getSupportFragmentManager().findFragmentById(R.id.container_body);
+//            if(f instanceof ProfileFragment){
+//                pencil.setVisibility(View.VISIBLE);
+//            }
+//            else pencil.setVisibility(View.INVISIBLE);
         }
     }
 }

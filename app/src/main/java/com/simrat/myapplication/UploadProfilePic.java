@@ -28,6 +28,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.simrat.myapplication.data.RideshareDbHelper;
+import com.simrat.myapplication.model.User;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,6 +39,9 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -56,6 +62,9 @@ public class UploadProfilePic extends AppCompatActivity {
     private String imgDecodableString;
     private String type, filename, bitmapEncode, token;
     private SharedPreferences sharedPreferences;
+    private RideshareDbHelper dbHelper;
+    private byte[] bitmapBytes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +83,7 @@ public class UploadProfilePic extends AppCompatActivity {
 
     }
     private void findViews(){
+        dbHelper = new RideshareDbHelper(getApplicationContext());
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         title = (TextView) findViewById(R.id.title);
@@ -86,9 +96,29 @@ public class UploadProfilePic extends AppCompatActivity {
         save.setTypeface(MyApplication.getPt_sans());
         token = null;
         profilePic = (ImageView) findViewById(R.id.profile_pic);
-        String profilePicBitmap = sharedPreferences.getString("ProfilePic", "");
-        byte[] decodedPic = Base64.decode(profilePicBitmap, Base64.DEFAULT);
-        profilePic.setImageBitmap(BitmapFactory.decodeByteArray(decodedPic, 0, decodedPic.length));
+        String path = getApplicationContext().getFilesDir() + "/" + sharedPreferences.getString("AuthToken", "") + "dp.jpg";
+        File file = new File(path);
+
+        if(file.exists()){
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                profilePic.setImageBitmap(bitmap);
+            }catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+        }
+        else{
+            path = getApplicationContext().getFilesDir() + "/" + sharedPreferences.getString("AuthToken", "") + "dp.png";
+            file = new File(path);
+            if(file.exists()){
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                    profilePic.setImageBitmap(bitmap);
+                }catch (FileNotFoundException e){
+                    e.printStackTrace();
+                }
+            }
+        }
 
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,7 +195,7 @@ public class UploadProfilePic extends AppCompatActivity {
                     Toast.makeText(this, "Please upload JPG/PNG image",Toast.LENGTH_LONG).show();
                     return;
                 }
-                byte bitmapBytes[] = outputStream.toByteArray();
+                bitmapBytes = outputStream.toByteArray();
                 bitmapEncode = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
                 Log.d("Image", bitmapEncode);
                 Log.d("Imagelen", Integer.toString(bitmapEncode.length()));
@@ -243,11 +273,30 @@ public class UploadProfilePic extends AppCompatActivity {
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
-                    while((line = br.readLine()) !=null) {
+                    while((line = br.readLine()) != null) {
                         response += line;
 
                     }
+                    File file = new File(getFilesDir(), params[0] + params[3]);
+                    FileOutputStream fileOutputStream;
+                    if(file.exists()){
+                        file.delete();
+                    }
+                    try{
+                        byte[] decodedPic = Base64.decode(params[1], Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedPic, 0, decodedPic.length);
+                        fileOutputStream = new FileOutputStream(file);
+                        if(params[2] == "image/jpeg")
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                        else bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
 
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    User u = dbHelper.getUser(params[0]);
                     sharedPreferences.edit().putString("ProfilePic", params[1]).commit();
                     json = new JSONObject(response);
 

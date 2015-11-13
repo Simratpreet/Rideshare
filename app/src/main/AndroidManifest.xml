@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.simrat.myapplication" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.simrat.myapplication">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -46,6 +47,12 @@
         </activity>
         <activity
             android:name=".PostRide"
+            android:label=""
+            android:parentActivityName=".SecondActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".EditProfile"
             android:label=""
             android:parentActivityName=".SecondActivity"
             android:theme="@style/AppTheme.NoActionBar" >

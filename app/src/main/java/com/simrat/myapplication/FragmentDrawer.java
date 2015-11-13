@@ -3,6 +3,9 @@ package com.simrat.myapplication;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,18 +29,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.simrat.myapplication.adapter.NavigationDrawerAdapter;
+import com.simrat.myapplication.data.RideshareDbHelper;
+import com.simrat.myapplication.data.UserContract.*;
 import com.simrat.myapplication.model.NavDrawerItem;
+import com.simrat.myapplication.model.User;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-        
+
 
 
 public class FragmentDrawer extends Fragment {
 
-
-
+    private String DEBUG_TAG = this.getClass().getName().toString();
     private LinearLayout navHeader;
     private RecyclerView recyclerView;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -48,7 +56,8 @@ public class FragmentDrawer extends Fragment {
     private FragmentDrawerListener drawerListener;
     static SharedPreferences sharedPreferences;
     static ImageView profilePic;
-    TextView personName;
+    private TextView personName;
+    private RideshareDbHelper dbHelper;
 
     public FragmentDrawer(){
 
@@ -73,36 +82,57 @@ public class FragmentDrawer extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         titles = getActivity().getResources().getStringArray(R.array.nav_drawer_labels);
+
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        dbHelper = new RideshareDbHelper(getContext());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawer_list);
-
+        profilePic = (ImageView) layout.findViewById(R.id.profile_pic);
         navHeader = (LinearLayout) layout.findViewById(R.id.nav_header_container);
+        personName = (TextView) layout.findViewById(R.id.person_name);
         navHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDrawerLayout.closeDrawers();
                 getActivity().getSupportFragmentManager().beginTransaction().
-                        replace(R.id.container_body,new ProfileFragment()).commit();
+                        replace(R.id.container_body, new ProfileFragment()).commit();
             }
         });
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        personName = (TextView) layout.findViewById(R.id.person_name);
+
         personName.setText(sharedPreferences.getString("Name", ""));
-        Log.d("name2", sharedPreferences.getString("Name", ""));
-        //Bundle extras = getActivity().getIntent().getExtras();
-        //String profilePicBitmap = extras.getString("fb_dp");
-        String profilePicBitmap = sharedPreferences.getString("ProfilePic", "");
-        Log.d("Encoding2", profilePicBitmap);
-        byte[] decodedPic = Base64.decode(profilePicBitmap, Base64.DEFAULT);
-        profilePic = (ImageView) layout.findViewById(R.id.profile_pic);
-        profilePic.setImageBitmap(BitmapFactory.decodeByteArray(decodedPic, 0, decodedPic.length));
+        String token = sharedPreferences.getString("AuthToken", "");
+        Log.d(DEBUG_TAG, token);
+        User user = dbHelper.getUser(token);
 
+        String path = getContext().getFilesDir() + "/" + token + "dp.jpg";
+        File file = new File(path);
 
+        if(file.exists()){
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                profilePic.setImageBitmap(bitmap);
+            }catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+        }
+        else{
+            path = getContext().getFilesDir() + "/" + token + "dp.png";
+            file = new File(path);
+            if(file.exists()){
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                    profilePic.setImageBitmap(bitmap);
+                }catch (FileNotFoundException e){
+                    e.printStackTrace();
+                }
+            }
+        }
 
         adapter = new NavigationDrawerAdapter(getActivity(), getData());
         recyclerView.setAdapter(adapter);
