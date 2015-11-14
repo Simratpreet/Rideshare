@@ -20,5 +20,9 @@ public final class UserContract {
         public static final String COLUMN_GENDER = "gender";
         public static final String COLUMN_CITY = "city";
         public static final String COLUMN_PROFILE_PIC = "profile_pic";
+        public static final String COLUMN_AGE = "age";
+        public static final String COLUMN_MUSIC_LOVER = "music_lover";
+        public static final String COLUMN_SMOKER = "smoker";
+        public static final String COLUMN_DRINKER = "drinker";
     }
 }

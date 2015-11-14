@@ -28,12 +28,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class ProfileFragment extends Fragment {
 
     private String DEBUG_TAG = this.getClass().getName().toString();
     private RideshareDbHelper dbHelper;
-    private TextView personName, email, phone, gender, city;
-    private Switch music, smoke, drink;
+    private TextView personName, email, phone, gender, city, age;
+    @Bind(R.id.music) Switch music;
+    @Bind(R.id.smoke) Switch smoke;
+    @Bind(R.id.drink) Switch drink;
     static SharedPreferences sharedPreferences;
     static private ImageView profilePic;
     private ImageView pencil;
@@ -66,6 +71,8 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.profile_layout, container, false);
+        ButterKnife.bind(this, view);
+        
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         findViews(view);
         return view;
@@ -80,11 +87,12 @@ public class ProfileFragment extends Fragment {
         String token = sharedPreferences.getString("AuthToken", "");
         dbHelper = new RideshareDbHelper(getContext());
         personName = (TextView) view.findViewById(R.id.person_name);
-        personName.setText(sharedPreferences.getString("Name", ""));
+        personName.setText(sharedPreferences.getString("Name", "").toUpperCase());
         email = (TextView) view.findViewById(R.id.emailText);
         phone = (TextView) view.findViewById(R.id.phoneText);
         gender = (TextView) view.findViewById(R.id.genderText);
         city = (TextView) view.findViewById(R.id.cityText);
+        age = (TextView) view.findViewById(R.id.ageText);
 
         profilePic = (ImageView) view.findViewById(R.id.profile_pic);
         Log.d(DEBUG_TAG, token);
@@ -93,6 +101,14 @@ public class ProfileFragment extends Fragment {
         phone.setText(user.getPhone());
         gender.setText(user.getGender());
         city.setText(user.getCity());
+        if(user.getAge() != 0)
+            age.setText(Integer.toString(user.getAge()));
+        if(user.getMusic().contentEquals("true"))
+            music.setChecked(true);
+        if(user.getSmoke().contentEquals("true"))
+            smoke.setChecked(true);
+        if(user.getDrink().contentEquals("true"))
+            drink.setChecked(true);
 //        if(sharedPreferences.getString("Gender", "") != "")
 //            gender.setText(sharedPreferences.getString("Gender", "").substring(0,1).toUpperCase() +
 //                    sharedPreferences.getString("Gender", "").substring(1) + ", "
@@ -142,6 +158,7 @@ public class ProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
+        dbHelper.getColumns();
 
     }
     public void setFont(ViewGroup group, Typeface font) {

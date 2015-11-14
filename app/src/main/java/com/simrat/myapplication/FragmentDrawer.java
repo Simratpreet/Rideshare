@@ -105,7 +105,7 @@ public class FragmentDrawer extends Fragment {
             }
         });
 
-        personName.setText(sharedPreferences.getString("Name", ""));
+        personName.setText(sharedPreferences.getString("Name", "").toUpperCase());
         String token = sharedPreferences.getString("AuthToken", "");
         Log.d(DEBUG_TAG, token);
         User user = dbHelper.getUser(token);

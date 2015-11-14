@@ -17,7 +17,7 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
 
     private String DEBUG_TAG = this.getClass().getName().toString();
     private SQLiteDatabase db;
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "rideshare.db";
 
     public RideshareDbHelper(Context context){
@@ -39,12 +39,25 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        onCreate(sqLiteDatabase);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        String add_age = "ALTER TABLE " + UserEntry.TABLE_NAME + " ADD COLUMN " + UserEntry.COLUMN_AGE + " INTEGER ";
+        String add_music_lover = "ALTER TABLE " + UserEntry.TABLE_NAME + " ADD COLUMN " + UserEntry.COLUMN_MUSIC_LOVER + " TEXT ";
+        String add_smoker = "ALTER TABLE " + UserEntry.TABLE_NAME + " ADD COLUMN " + UserEntry.COLUMN_SMOKER + " TEXT ";
+        String add_drinker = "ALTER TABLE " + UserEntry.TABLE_NAME + " ADD COLUMN " + UserEntry.COLUMN_DRINKER + " TEXT ";
+
+//        if(oldVersion == 1) {
+//            onCreate(sqLiteDatabase);
+//        }
+//        if(oldVersion >= 1 && newVersion == 2){
+//            sqLiteDatabase.execSQL(add_age);
+//            sqLiteDatabase.execSQL(add_music_lover);
+//            sqLiteDatabase.execSQL(add_smoker);
+//            sqLiteDatabase.execSQL(add_drinker);
+//        }
+        Log.d(DEBUG_TAG, Integer.toString(oldVersion));
+        Log.d(DEBUG_TAG, Integer.toString(newVersion));
+
     }
-//    private void deleteProfilePic(SQLiteDatabase sqLiteDatabase){
-//        sqLiteDatabase.execSQL();
-//    }
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -77,8 +90,42 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
                 cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_PHONE)),
                 cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_GENDER)),
                 cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_CITY)));
+        user.setAge(cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE)));
+        user.setMusic(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_MUSIC_LOVER)));
+        user.setSmoke(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_SMOKER)));
+        user.setDrink(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_DRINKER)));
+        Log.d(DEBUG_TAG, Integer.toString(cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE))));
+        //Log.d(DEBUG_TAG, cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_DRINKER)));
+        Log.d(DEBUG_TAG, user.getDrink());
         cursor.close();
         return user;
+    }
+    public void updateUser(String token, User user){
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(UserEntry.COLUMN_EMAIL, user.getEmail());
+        contentValues.put(UserEntry.COLUMN_FIRST_NAME, user.getFirst_name());
+        contentValues.put(UserEntry.COLUMN_LAST_NAME, user.getLast_name());
+        contentValues.put(UserEntry.COLUMN_PHONE, user.getPhone());
+        contentValues.put(UserEntry.COLUMN_GENDER, user.getGender());
+        contentValues.put(UserEntry.COLUMN_CITY, user.getCity());
+        contentValues.put(UserEntry.COLUMN_AGE, user.getAge());
+        contentValues.put(UserEntry.COLUMN_MUSIC_LOVER, user.getMusic());
+        contentValues.put(UserEntry.COLUMN_SMOKER, user.getSmoke());
+        contentValues.put(UserEntry.COLUMN_DRINKER, user.getDrink());
+
+        long rowId;
+        rowId = db.update(UserEntry.TABLE_NAME, contentValues, " TOKEN = ? ", new String[] { token });
+        Log.d(DEBUG_TAG, Long.toString(rowId));
+    }
+    public void getColumns(){
+        db = this.getReadableDatabase();
+        Cursor cursor = db.query(UserEntry.TABLE_NAME, null, null, null, null, null, null);
+        String[] column_names = cursor.getColumnNames();
+        for(int i=0; i<column_names.length; i++){
+            Log.d(DEBUG_TAG, column_names[i]);
+            Log.d(DEBUG_TAG, Integer.toString(db.getVersion()));
+        }
     }
 
 }

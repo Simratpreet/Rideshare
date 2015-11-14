@@ -9,6 +9,11 @@ public class User{
     String gender;
     String city;
     String token;
+    int age;
+    String music;
+    String smoke;
+    String drink;
+
     byte[] profile_pic;
 
     public User(){
@@ -78,5 +83,35 @@ public class User{
         this.token = token;
     }
 
+    public int getAge() {
+        return this.age;
+    }
 
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getMusic() {
+        return this.music;
+    }
+
+    public void setMusic(String music) {
+        this.music = music;
+    }
+
+    public String getSmoke() {
+        return this.smoke;
+    }
+
+    public void setSmoke(String smoke) {
+        this.smoke = smoke;
+    }
+
+    public String getDrink() {
+        return this.drink;
+    }
+
+    public void setDrink(String drink) {
+        this.drink = drink;
+    }
 }
