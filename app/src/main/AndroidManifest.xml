@@ -58,6 +58,12 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
+            android:name=".AddCar"
+            android:label=""
+            android:parentActivityName=".SecondActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
             android:name=".RidesNearMe"
             android:label="@string/title_activity_rides_near_me"
             android:theme="@style/AppTheme.NoActionBar" >

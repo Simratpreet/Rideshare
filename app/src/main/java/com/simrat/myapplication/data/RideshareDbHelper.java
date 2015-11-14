@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.simrat.myapplication.data.UserContract.*;
+import com.simrat.myapplication.data.RideshareContract.*;
 import com.simrat.myapplication.model.User;
 
 /**
@@ -17,7 +17,7 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
 
     private String DEBUG_TAG = this.getClass().getName().toString();
     private SQLiteDatabase db;
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "rideshare.db";
 
     public RideshareDbHelper(Context context){
@@ -45,15 +45,23 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
         String add_smoker = "ALTER TABLE " + UserEntry.TABLE_NAME + " ADD COLUMN " + UserEntry.COLUMN_SMOKER + " TEXT ";
         String add_drinker = "ALTER TABLE " + UserEntry.TABLE_NAME + " ADD COLUMN " + UserEntry.COLUMN_DRINKER + " TEXT ";
 
-//        if(oldVersion == 1) {
-//            onCreate(sqLiteDatabase);
-//        }
-//        if(oldVersion >= 1 && newVersion == 2){
-//            sqLiteDatabase.execSQL(add_age);
-//            sqLiteDatabase.execSQL(add_music_lover);
-//            sqLiteDatabase.execSQL(add_smoker);
-//            sqLiteDatabase.execSQL(add_drinker);
-//        }
+        String SQL_CREATE_CAR_TABLE = "CREATE TABLE " + CarEntry.TABLE_NAME + " (" +
+                CarEntry.COLUMN_NAME + " TEXT, " +
+                CarEntry.COLUMN_REG_NO + " TEXT, " +
+                CarEntry.COLUMN_SEATS + " INTEGER, " +
+                CarEntry.COLUMN_USER_ID + " INTEGER)";
+        if(oldVersion == 1) {
+            onCreate(sqLiteDatabase);
+        }
+        if(newVersion == 2){
+            sqLiteDatabase.execSQL(add_age);
+            sqLiteDatabase.execSQL(add_music_lover);
+            sqLiteDatabase.execSQL(add_smoker);
+            sqLiteDatabase.execSQL(add_drinker);
+        }
+        if(newVersion == 3){
+            sqLiteDatabase.execSQL(SQL_CREATE_CAR_TABLE);
+        }
         Log.d(DEBUG_TAG, Integer.toString(oldVersion));
         Log.d(DEBUG_TAG, Integer.toString(newVersion));
 
@@ -94,9 +102,9 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
         user.setMusic(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_MUSIC_LOVER)));
         user.setSmoke(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_SMOKER)));
         user.setDrink(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_DRINKER)));
-        Log.d(DEBUG_TAG, Integer.toString(cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE))));
+        //Log.d(DEBUG_TAG, Integer.toString(cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE))));
         //Log.d(DEBUG_TAG, cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_DRINKER)));
-        Log.d(DEBUG_TAG, user.getDrink());
+        //Log.d(DEBUG_TAG, user.getDrink());
         cursor.close();
         return user;
     }
@@ -120,7 +128,7 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
     }
     public void getColumns(){
         db = this.getReadableDatabase();
-        Cursor cursor = db.query(UserEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursor = db.query(CarEntry.TABLE_NAME, null, null, null, null, null, null);
         String[] column_names = cursor.getColumnNames();
         for(int i=0; i<column_names.length; i++){
             Log.d(DEBUG_TAG, column_names[i]);

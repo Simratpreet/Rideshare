@@ -1,5 +1,6 @@
 package com.simrat.myapplication;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -11,12 +12,17 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by simrat on 1/11/15.
@@ -25,11 +31,12 @@ public class PostRide extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private TextView title;
+    @Bind(R.id.go) Button go;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_ride);
-
+        ButterKnife.bind(this);
         findViews();
         HashMap<String, String> ride_details;
 
@@ -53,6 +60,15 @@ public class PostRide extends AppCompatActivity {
                 Log.d(key, value);
             }
         }
+
+        go.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(PostRide.this, AddCar.class);
+                startActivity(i);
+                finish();
+            }
+        });
 
     }
     private void findViews(){

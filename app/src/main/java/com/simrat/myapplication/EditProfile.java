@@ -1,6 +1,7 @@
 package com.simrat.myapplication;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -103,14 +105,14 @@ public class EditProfile extends AppCompatActivity {
         phone.setText(user.getPhone());
         gender.setText(user.getGender());
         city.setText(user.getCity());
-        Log.d(DEBUG_TAG, user.getDrink());
+
         if(user.getAge() != 0)
             age.setText(Integer.toString(user.getAge()));
-        if(user.getMusic().contentEquals("true"))
+        if(user.getMusic() != null && user.getMusic().contentEquals("true"))
             music.setChecked(true);
-        if(user.getSmoke().contentEquals("true"))
+        if(user.getSmoke() != null && user.getSmoke().contentEquals("true"))
             smoke.setChecked(true);
-        if(user.getDrink().contentEquals("true"))
+        if(user.getDrink() != null && user.getDrink().contentEquals("true"))
             drink.setChecked(true);
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +123,14 @@ public class EditProfile extends AppCompatActivity {
         });
     }
     private void setUpEdit(){
+
+        //hide keyboard on save click
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
         String first_name = firstname.getText().toString();
         String last_name = lastname.getText().toString();
         String _email = email.getText().toString();

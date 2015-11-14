@@ -72,7 +72,7 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.profile_layout, container, false);
         ButterKnife.bind(this, view);
-        
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         findViews(view);
         return view;
@@ -103,11 +103,11 @@ public class ProfileFragment extends Fragment {
         city.setText(user.getCity());
         if(user.getAge() != 0)
             age.setText(Integer.toString(user.getAge()));
-        if(user.getMusic().contentEquals("true"))
+        if(user.getMusic() != null && user.getMusic().contentEquals("true"))
             music.setChecked(true);
-        if(user.getSmoke().contentEquals("true"))
+        if(user.getSmoke() != null && user.getSmoke().contentEquals("true"))
             smoke.setChecked(true);
-        if(user.getDrink().contentEquals("true"))
+        if(user.getDrink() != null && user.getDrink().contentEquals("true"))
             drink.setChecked(true);
 //        if(sharedPreferences.getString("Gender", "") != "")
 //            gender.setText(sharedPreferences.getString("Gender", "").substring(0,1).toUpperCase() +
@@ -155,7 +155,6 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(), EditProfile.class);
                 startActivity(i);
-                getActivity().finish();
             }
         });
         dbHelper.getColumns();

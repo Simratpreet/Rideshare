@@ -152,7 +152,7 @@
                         android:layout_marginLeft="4dp"
                         android:text="Love Music?"
                         android:textSize="16sp"
-                        android:textColor="@color/colorText1"
+                        android:textColor="@color/colorPrimary"
                         android:id="@+id/music"/>
 
                 </LinearLayout>
@@ -173,7 +173,7 @@
                         android:layout_marginLeft="4dp"
                         android:text="Smoker?"
                         android:textSize="16sp"
-                        android:textColor="@color/colorText1"
+                        android:textColor="@color/colorPrimary"
                         android:id="@+id/smoke"/>
 
                 </LinearLayout>
@@ -194,7 +194,7 @@
                         android:layout_marginLeft="4dp"
                         android:text="Drinker?"
                         android:textSize="16sp"
-                        android:textColor="@color/colorText1"
+                        android:textColor="@color/colorPrimary"
                         android:id="@+id/drink"/>
 
                 </LinearLayout>

@@ -5,9 +5,9 @@ import android.provider.BaseColumns;
 /**
  * Created by simrat on 13/11/15.
  */
-public final class UserContract {
+public final class RideshareContract {
 
-    public UserContract(){}
+    public RideshareContract(){}
 
     public static abstract class UserEntry implements BaseColumns{
 
@@ -24,5 +24,12 @@ public final class UserContract {
         public static final String COLUMN_MUSIC_LOVER = "music_lover";
         public static final String COLUMN_SMOKER = "smoker";
         public static final String COLUMN_DRINKER = "drinker";
+    }
+    public static abstract class CarEntry implements BaseColumns{
+        public static final String TABLE_NAME = "car";
+        public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_SEATS = "seats";
+        public static final String COLUMN_REG_NO = "registration_no";
     }
 }

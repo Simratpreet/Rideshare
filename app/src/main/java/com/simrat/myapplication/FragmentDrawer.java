@@ -3,11 +3,8 @@ package com.simrat.myapplication;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -30,7 +27,6 @@ import android.widget.TextView;
 
 import com.simrat.myapplication.adapter.NavigationDrawerAdapter;
 import com.simrat.myapplication.data.RideshareDbHelper;
-import com.simrat.myapplication.data.UserContract.*;
 import com.simrat.myapplication.model.NavDrawerItem;
 import com.simrat.myapplication.model.User;
 
