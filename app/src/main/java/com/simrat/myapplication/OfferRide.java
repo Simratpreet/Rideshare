@@ -3,8 +3,10 @@ package com.simrat.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -44,6 +46,7 @@ public class OfferRide extends Fragment {
     private TextView fromText,toText,selectText;
     private AutoCompleteTextView mAutocompleteViewSource, mAutocompleteViewDest;
     private EditText datetime;
+    private SharedPreferences sharedPreferences;
     private static final LatLngBounds BOUNDS_INDIA = new LatLngBounds(
             new LatLng(21.000000, 78.000000), new LatLng(21.000000, 78.000000));
     private Button next;
@@ -83,14 +86,11 @@ public class OfferRide extends Fragment {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HashMap<String,String> ride_fields = new HashMap<>();
-                ride_fields.put("FROM", mAutocompleteViewSource.getText().toString());
-                ride_fields.put("TO", mAutocompleteViewDest.getText().toString());
-                ride_fields.put("DATETIME", datetime.getText().toString());
-                Bundle extras = new Bundle();
-                extras.putSerializable("RideFields", ride_fields);
+
+                sharedPreferences.edit().putString("source", mAutocompleteViewSource.getText().toString()).apply();
+                sharedPreferences.edit().putString("destination", mAutocompleteViewDest.getText().toString()).apply();
+                sharedPreferences.edit().putString("time", datetime.getText().toString()).apply();
                 Intent i = new Intent(getActivity(), PostRide.class);
-                i.putExtras(extras);
                 startActivity(i);
             }
         });
@@ -110,6 +110,7 @@ public class OfferRide extends Fragment {
     }
 
     private void findViews(View view){
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         fromText = (TextView) view.findViewById(R.id.from_text);
         toText = (TextView) view.findViewById(R.id.to_text);
         selectText = (TextView) view.findViewById(R.id.selectdatetimetext);

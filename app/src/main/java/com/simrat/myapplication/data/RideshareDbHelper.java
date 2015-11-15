@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.simrat.myapplication.data.RideshareContract.*;
+import com.simrat.myapplication.model.Car;
 import com.simrat.myapplication.model.User;
 
 /**
@@ -72,7 +73,6 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
         super.onDowngrade(db, oldVersion, newVersion);
     }
     public void addUser(User user){
-
         db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(UserEntry.COLUMN_EMAIL, user.getEmail());
@@ -98,13 +98,11 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
                 cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_PHONE)),
                 cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_GENDER)),
                 cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_CITY)));
+        user.setId(cursor.getInt(cursor.getColumnIndex(UserEntry._ID)));
         user.setAge(cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE)));
         user.setMusic(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_MUSIC_LOVER)));
         user.setSmoke(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_SMOKER)));
         user.setDrink(cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_DRINKER)));
-        //Log.d(DEBUG_TAG, Integer.toString(cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_AGE))));
-        //Log.d(DEBUG_TAG, cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_DRINKER)));
-        //Log.d(DEBUG_TAG, user.getDrink());
         cursor.close();
         return user;
     }
@@ -134,6 +132,29 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
             Log.d(DEBUG_TAG, column_names[i]);
             Log.d(DEBUG_TAG, Integer.toString(db.getVersion()));
         }
+    }
+    public void addCar(Car car){
+        db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CarEntry.COLUMN_USER_ID, car.getUser_id());
+        contentValues.put(CarEntry.COLUMN_NAME, car.getName());
+        contentValues.put(CarEntry.COLUMN_SEATS, car.getSeats());
+        contentValues.put(CarEntry.COLUMN_REG_NO, car.getReg_no());
+        long rowId;
+        rowId = db.insert(CarEntry.TABLE_NAME, null, contentValues);
+        Log.d(DEBUG_TAG, Long.toString(rowId));
+    }
+    public Car getCar(int user_id){
+        db = this.getReadableDatabase();
+        Cursor cursor = db.query(CarEntry.TABLE_NAME, null, " USER_ID = ? ", new String[] { Integer.toString(user_id) },
+                null, null, null);
+        Car car = new Car(cursor.getInt(cursor.getColumnIndex(CarEntry.COLUMN_USER_ID)),
+                cursor.getString(cursor.getColumnIndex(CarEntry.COLUMN_NAME)),
+                cursor.getInt(cursor.getColumnIndex(CarEntry.COLUMN_SEATS)),
+                cursor.getString(cursor.getColumnIndex(CarEntry.COLUMN_REG_NO)));
+        car.setId(cursor.getInt(cursor.getColumnIndex(CarEntry._ID)));
+        cursor.close();
+        return car;
     }
 
 }

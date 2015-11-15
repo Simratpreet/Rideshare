@@ -2,6 +2,8 @@ package com.simrat.myapplication.model;
 
 
 public class User{
+
+    int id;
     String first_name;
     String last_name;
     String email;
@@ -26,6 +28,14 @@ public class User{
         this.phone = phone;
         this.gender = gender;
         this.city = city;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFirst_name() {

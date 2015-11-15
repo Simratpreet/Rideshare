@@ -34,6 +34,7 @@ public class MyApplication extends Application {
     }
     public static Typeface getSquada_one() { return squada_one; }
 
+
     public void printKeyHash() {
         try {
             PackageInfo info = getPackageManager().getPackageInfo("com.simrat.myapplication", PackageManager.GET_SIGNATURES);
