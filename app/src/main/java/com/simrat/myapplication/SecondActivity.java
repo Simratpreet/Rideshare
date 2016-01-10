@@ -32,7 +32,7 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
     Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
     private TextView title;
-    private ImageView pencil;
+    //private ImageView pencil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +75,8 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
         //title.setText("Rideshare");
         title.setTypeface(MyApplication.getPt_sans());
         mToolbar.setTitle("");
-        pencil = (ImageView) findViewById(R.id.pencil);
-        pencil.setVisibility(View.INVISIBLE);
+        //pencil = (ImageView) findViewById(R.id.pencil);
+        //pencil.setVisibility(View.INVISIBLE);
     }
 //    protected void onStart(){
 //        super.onStart();
@@ -113,7 +113,7 @@ public class SecondActivity extends AppCompatActivity implements FragmentDrawer.
                 fragment = new TabFragment();
                 break;
             case 1:
-                fragment = new FriendsFragment();
+                fragment = new TabFragment();
                 name = "My Rides";
                 break;
             case 2:

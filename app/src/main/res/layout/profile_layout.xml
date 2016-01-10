@@ -271,6 +271,16 @@
 
         </LinearLayout>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryText"
+            android:text="EDIT PROFILE"
+            android:textSize="18sp"
+            android:id="@+id/edit_profile_button"/>
+
     </LinearLayout>
 
 

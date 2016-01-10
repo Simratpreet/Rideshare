@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class OfferRide extends Fragment {
 
     public static final String TAG = "SampleActivityBase";
@@ -50,6 +54,8 @@ public class OfferRide extends Fragment {
     private static final LatLngBounds BOUNDS_INDIA = new LatLngBounds(
             new LatLng(21.000000, 78.000000), new LatLng(21.000000, 78.000000));
     private Button next;
+    @Bind(R.id.warning_msg)
+    TextView warning;
 
     public OfferRide() {
 
@@ -60,7 +66,9 @@ public class OfferRide extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_offer_ride, container, false);
+        ButterKnife.bind(this, view);
         findViews(view);
 
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -87,11 +95,18 @@ public class OfferRide extends Fragment {
             @Override
             public void onClick(View view) {
 
-                sharedPreferences.edit().putString("source", mAutocompleteViewSource.getText().toString()).apply();
-                sharedPreferences.edit().putString("destination", mAutocompleteViewDest.getText().toString()).apply();
-                sharedPreferences.edit().putString("time", datetime.getText().toString()).apply();
-                Intent i = new Intent(getActivity(), PostRide.class);
-                startActivity(i);
+                if(mAutocompleteViewSource.getText().toString().isEmpty() || mAutocompleteViewDest.getText().toString().isEmpty() ||
+                        datetime.getText().toString().isEmpty()){
+                        warning.setVisibility(View.VISIBLE);
+                }
+                else{
+                    sharedPreferences.edit().putString("source", mAutocompleteViewSource.getText().toString()).apply();
+                    sharedPreferences.edit().putString("destination", mAutocompleteViewDest.getText().toString()).apply();
+                    sharedPreferences.edit().putString("time", datetime.getText().toString()).apply();
+                    warning.setVisibility(View.INVISIBLE);
+                    Intent i = new Intent(getActivity(), PostRide.class);
+                    startActivity(i);
+                }
             }
         });
         return view;
@@ -142,6 +157,7 @@ public class OfferRide extends Fragment {
                 t.show(getActivity().getFragmentManager(), "TimePicker");
                 String month = getMonth(monthOfYear);
                 String date = dayOfMonth + " " + month + " " + year;
+                sharedPreferences.edit().putInt("day", dayOfMonth).commit();
                 datetime.setText(date);
             }
         };

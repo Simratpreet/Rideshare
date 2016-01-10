@@ -13,6 +13,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.simrat.myapplication.data.RideshareDbHelper;
+
 
 public class Home extends Activity {
 
@@ -21,12 +23,14 @@ public class Home extends Activity {
     SharedPreferences sharedPreferences;
     private GestureDetector gestureDetector;
     Animation fadeIn, move;
+    private RideshareDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         findViews();
+        dbHelper = new RideshareDbHelper(getApplicationContext());
         new Handler().postDelayed(new Runnable() {
 
 

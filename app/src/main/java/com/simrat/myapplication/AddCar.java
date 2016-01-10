@@ -1,6 +1,7 @@
 package com.simrat.myapplication;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -59,6 +60,7 @@ public class AddCar extends AppCompatActivity{
     JSONArray cars;
     JSONObject brand_list;
     JSONArray car;
+    SharedPreferences sharedPreferences;
     private String token;
     @Bind(R.id.rootView) ViewGroup group;
     @Bind(R.id.toolbar) Toolbar mToolbar;
@@ -127,6 +129,12 @@ public class AddCar extends AppCompatActivity{
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_car);
@@ -138,6 +146,7 @@ public class AddCar extends AppCompatActivity{
         title.setTypeface(MyApplication.getPt_sans());
         mToolbar.setTitle("");
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         token = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("AuthToken", "");
         dbHelper = new RideshareDbHelper(getApplicationContext());
         user = dbHelper.getUser(token);
@@ -219,15 +228,22 @@ public class AddCar extends AppCompatActivity{
         });
     }
     @OnClick(R.id.addCar) public void addCar(){
-        String brand = brandSpinner.getSelectedItem().toString();
-        String car = carSpinner.getSelectedItem().toString();
-        String car_name = brand + " " + car;
-        String seats = seatText.getText().toString();
-        String reg_no = regNo.getText().toString().toUpperCase();
-        ProgressDialog pDialog = new ProgressDialog(AddCar.this);
-        pDialog.setMessage("Adding Your Car ...");
-        AddCarTask task = new AddCarTask(pDialog);
-        task.execute(token, car_name, seats, reg_no);
+
+        int allowed = sharedPreferences.getInt("day", 0);
+        if(Integer.parseInt(regNo.getText().toString().substring(regNo.length() - 1)) % 2 != allowed % 2){
+            Toast.makeText(getApplicationContext(), "Check for odd/even day", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            String brand = brandSpinner.getSelectedItem().toString();
+            String car = carSpinner.getSelectedItem().toString();
+            String car_name = brand + " " + car;
+            String seats = seatText.getText().toString();
+            String reg_no = regNo.getText().toString().toUpperCase();
+            ProgressDialog pDialog = new ProgressDialog(AddCar.this);
+            pDialog.setMessage("Adding Your Car ...");
+            AddCarTask task = new AddCarTask(pDialog);
+            task.execute(token, car_name, seats, reg_no);
+        }
     }
     private class AddCarTask extends AsyncTask<String, Void, Void>{
         private ProgressDialog progressDialog;

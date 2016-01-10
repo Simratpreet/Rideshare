@@ -41,7 +41,7 @@ public class ProfileFragment extends Fragment {
     @Bind(R.id.drink) Switch drink;
     static SharedPreferences sharedPreferences;
     static private ImageView profilePic;
-    private ImageView pencil;
+    @Bind(R.id.edit_profile_button) Button edit_profile;
     private TextView title;
 
     public ProfileFragment() {
@@ -51,25 +51,23 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().findViewById(R.id.pencil).setVisibility(View.VISIBLE);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().findViewById(R.id.pencil).setVisibility(View.VISIBLE);
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getActivity().findViewById(R.id.pencil).setVisibility(View.VISIBLE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.profile_layout, container, false);
         ButterKnife.bind(this, view);
 
@@ -80,8 +78,6 @@ public class ProfileFragment extends Fragment {
     private void findViews(View view){
         ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rootView);
         setFont(viewGroup, MyApplication.getPt_sans());
-        pencil = (ImageView) getActivity().findViewById(R.id.pencil);
-        pencil.setVisibility(View.VISIBLE);
         title = (TextView) getActivity().findViewById(R.id.title);
         title.setText("My Profile");
         String token = sharedPreferences.getString("AuthToken", "");
@@ -109,14 +105,6 @@ public class ProfileFragment extends Fragment {
             smoke.setChecked(true);
         if(user.getDrink() != null && user.getDrink().contentEquals("true"))
             drink.setChecked(true);
-//        if(sharedPreferences.getString("Gender", "") != "")
-//            gender.setText(sharedPreferences.getString("Gender", "").substring(0,1).toUpperCase() +
-//                    sharedPreferences.getString("Gender", "").substring(1) + ", "
-//                    + sharedPreferences.getString("Age", "") + " years old");
-//
-//        edu.setText(sharedPreferences.getString("Education", ""));
-//        work.setText(sharedPreferences.getString("Work", ""));
-//        location.setText(sharedPreferences.getString("Location", "")
 
         String path = getContext().getFilesDir() + "/" + token + "dp.jpg";
         File file = new File(path);
@@ -150,13 +138,15 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-        pencil.setOnClickListener(new View.OnClickListener() {
+
+        edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), EditProfile.class);
-                startActivity(i);
+                Intent intent = new Intent(getActivity(), EditProfile.class);
+                startActivity(intent);
             }
         });
+
         dbHelper.getColumns();
 
     }
@@ -180,6 +170,5 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        pencil.setVisibility(View.INVISIBLE);
     }
 }

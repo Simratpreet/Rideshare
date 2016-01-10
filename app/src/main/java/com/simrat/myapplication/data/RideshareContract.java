@@ -32,4 +32,14 @@ public final class RideshareContract {
         public static final String COLUMN_SEATS = "seats";
         public static final String COLUMN_REG_NO = "registration_no";
     }
+    public static abstract class RideEntry implements BaseColumns{
+        public static final String TABLE_NAME = "ride";
+        public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_SOURCE = "source";
+        public static final String COLUMN_DESTINATION = "destination";
+        public static final String COLUMN_PRICE_PER_SEAT = "price_per_seat";
+        public static final String COLUMN_CAR_ID = "car_id";
+        public static final String COLUMN_JOURNEY_DATETIME = "journey_datetime";
+        public static final String COLUMN_ALLOWED_PASS = "allowed_passengers";
+    }
 }
