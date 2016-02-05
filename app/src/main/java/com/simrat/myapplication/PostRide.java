@@ -215,18 +215,14 @@ public class PostRide extends AppCompatActivity {
                 }
                 Log.d(DEBUG_TAG, response);
                 if(responseCode == HttpURLConnection.HTTP_OK){
-//                    Car _car = new Car(user.getId(), p
-// arams[1], Integer.parseInt(params[2]), params[3]);
-//                    dbHelper.addCar(_car);
-                    String name = params[4].substring(0, params[4].length() - 8);
+                    String name = params[4].substring(0, params[4].length() - 7);
                     String reg_no = params[4].substring(params[4].length() - 4);
                     Log.d(DEBUG_TAG, name + reg_no);
-//                    int user_id = dbHelper.getUser(token).getId();
-//                    int car_id = dbHelper.getRideCar(Integer.toString(user_id), )
-//                    Ride ride = new Ride(, dbHelper.getRideCar());
-
+                    int car_id = dbHelper.getRideCar(Integer.toString(dbHelper.getUser(token).getId()), name, reg_no);
+                    Log.d(DEBUG_TAG, Integer.toString(car_id));
+                    Ride _ride = new Ride(dbHelper.getUser(token).getId(), car_id, params[1], params[2], params[3], params[5], params[6]);
+                    dbHelper.addRide(_ride);
                     toast = "Uploaded your ride";
-
                 }
                 Log.d(DEBUG_TAG, response);
                 urlConnection.disconnect();

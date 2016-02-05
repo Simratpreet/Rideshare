@@ -15,6 +15,7 @@ public class Car {
 
     }
     public Car(int user_id, String name, int seats, String reg_no){
+        this.id = id;
         this.user_id = user_id;
         this.name = name;
         this.seats = seats;

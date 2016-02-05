@@ -21,7 +21,7 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
 
     private String DEBUG_TAG = this.getClass().getName().toString();
     private SQLiteDatabase db;
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "rideshare.db";
 
     public RideshareDbHelper(Context context){
@@ -65,6 +65,34 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
                 RideEntry.COLUMN_ALLOWED_PASS + " TEXT) ";
         sqLiteDatabase.execSQL(SQL_CREATE_RIDE_TABLE);
 
+//        String add_id_to_car = "ALTER TABLE " + CarEntry.TABLE_NAME + " ADD COLUMN " + CarEntry._ID + " INTEGER PRIMARY KEY ";
+//        String add_id_to_ride = "ALTER TABLE " + RideEntry.TABLE_NAME + " ADD COLUMN " + RideEntry._ID + " INTEGER PRIMARY KEY ";
+//
+//        sqLiteDatabase.execSQL(add_id_to_car);
+//        sqLiteDatabase.execSQL(add_id_to_ride);
+
+        String drop_cars = "DROP TABLE " + CarEntry.TABLE_NAME;
+        String drop_rides = "DROP TABLE " + RideEntry.TABLE_NAME;
+        sqLiteDatabase.execSQL(drop_cars);
+        sqLiteDatabase.execSQL(drop_rides);
+        String SQL_CREATE_CAR_TABLE_PRIMARY = "CREATE TABLE " + CarEntry.TABLE_NAME + " (" +
+                CarEntry._ID + " INTEGER PRIMARY KEY, " +
+                CarEntry.COLUMN_NAME + " TEXT, " +
+                CarEntry.COLUMN_REG_NO + " TEXT, " +
+                CarEntry.COLUMN_SEATS + " INTEGER, " +
+                CarEntry.COLUMN_USER_ID + " INTEGER)";
+
+        String SQL_CREATE_RIDE_TABLE_PRIMARY = "CREATE TABLE " + RideEntry.TABLE_NAME + " (" +
+                RideEntry._ID + " INTEGER PRIMARY KEY, " +
+                RideEntry.COLUMN_USER_ID + " INTEGER, " +
+                RideEntry.COLUMN_CAR_ID + " INTEGER, " +
+                RideEntry.COLUMN_SOURCE + " TEXT, " +
+                RideEntry.COLUMN_DESTINATION + " TEXT, " +
+                RideEntry.COLUMN_JOURNEY_DATETIME + " TEXT, " +
+                RideEntry.COLUMN_PRICE_PER_SEAT + " TEXT, " +
+                RideEntry.COLUMN_ALLOWED_PASS + " TEXT) ";
+        sqLiteDatabase.execSQL(SQL_CREATE_CAR_TABLE_PRIMARY);
+        sqLiteDatabase.execSQL(SQL_CREATE_RIDE_TABLE_PRIMARY);
     }
 
     @Override
@@ -88,6 +116,29 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
                 RideEntry.COLUMN_PRICE_PER_SEAT + " TEXT, " +
                 RideEntry.COLUMN_ALLOWED_PASS + " TEXT) ";
 
+        String drop_cars = "DROP TABLE " + CarEntry.TABLE_NAME;
+        String drop_rides = "DROP TABLE " + RideEntry.TABLE_NAME;
+
+        String SQL_CREATE_CAR_TABLE_PRIMARY = "CREATE TABLE " + CarEntry.TABLE_NAME + " (" +
+                CarEntry._ID + " INTEGER PRIMARY KEY, " +
+                CarEntry.COLUMN_NAME + " TEXT, " +
+                CarEntry.COLUMN_REG_NO + " TEXT, " +
+                CarEntry.COLUMN_SEATS + " INTEGER, " +
+                CarEntry.COLUMN_USER_ID + " INTEGER)";
+
+        String SQL_CREATE_RIDE_TABLE_PRIMARY = "CREATE TABLE " + RideEntry.TABLE_NAME + " (" +
+                RideEntry._ID + " INTEGER PRIMARY KEY, " +
+                RideEntry.COLUMN_USER_ID + " INTEGER, " +
+                RideEntry.COLUMN_CAR_ID + " INTEGER, " +
+                RideEntry.COLUMN_SOURCE + " TEXT, " +
+                RideEntry.COLUMN_DESTINATION + " TEXT, " +
+                RideEntry.COLUMN_JOURNEY_DATETIME + " TEXT, " +
+                RideEntry.COLUMN_PRICE_PER_SEAT + " TEXT, " +
+                RideEntry.COLUMN_ALLOWED_PASS + " TEXT) ";
+
+//        String add_id_to_car = "ALTER TABLE " + CarEntry.TABLE_NAME + " ADD COLUMN " + CarEntry._ID + " INTEGER PRIMARY KEY ";
+//        String add_id_to_ride = "ALTER TABLE " + RideEntry.TABLE_NAME + " ADD COLUMN " + RideEntry._ID + " INTEGER PRIMARY KEY ";
+
         if(oldVersion < 2){
             sqLiteDatabase.execSQL(add_age);
             sqLiteDatabase.execSQL(add_music_lover);
@@ -99,6 +150,16 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
         }
         if(oldVersion < 4){
             sqLiteDatabase.execSQL(SQL_CREATE_RIDE_TABLE);
+        }
+        if(oldVersion < 5){
+//            sqLiteDatabase.execSQL(add_id_to_car);
+//            sqLiteDatabase.execSQL(add_id_to_ride);
+        }
+        if(oldVersion < 6){
+            sqLiteDatabase.execSQL(drop_cars);
+            sqLiteDatabase.execSQL(drop_rides);
+            sqLiteDatabase.execSQL(SQL_CREATE_CAR_TABLE_PRIMARY);
+            sqLiteDatabase.execSQL(SQL_CREATE_RIDE_TABLE_PRIMARY);
         }
         Log.d(DEBUG_TAG, Integer.toString(oldVersion));
         Log.d(DEBUG_TAG, Integer.toString(newVersion));
@@ -165,10 +226,10 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
         db = this.getReadableDatabase();
         Cursor cursor = db.query(RideEntry.TABLE_NAME, null, null, null, null, null, null);
         String[] column_names = cursor.getColumnNames();
-        for(int i=0; i<column_names.length; i++){
-            Log.d(DEBUG_TAG, column_names[i]);
-            Log.d(DEBUG_TAG, Integer.toString(db.getVersion()));
-        }
+//        for(int i=0; i<column_names.length; i++){
+//            Log.d(DEBUG_TAG, column_names[i]);
+//            Log.d(DEBUG_TAG, Integer.toString(db.getVersion()));
+//        }
     }
     public void addCar(Car car){
         db = this.getWritableDatabase();
@@ -195,7 +256,9 @@ public class RideshareDbHelper extends SQLiteOpenHelper {
     }
     public int getRideCar(String user_id, String name, String reg_no){
         db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select id from car where user_id = ? and name = ? and registration_no like ?", new String[] { user_id, name, reg_no });
+        Log.d(DEBUG_TAG, user_id + " " + name);
+        Cursor cursor = db.rawQuery("Select * from car where user_id = ? and name = ? and registration_no like ?", new String[] { user_id, name, "%" + reg_no });
+        cursor.moveToFirst();
         return cursor.getInt(cursor.getColumnIndex(CarEntry._ID));
     }
     public ArrayList<String> myCars(int user_id){

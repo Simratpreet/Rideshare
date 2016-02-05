@@ -1,10 +1,13 @@
 package com.simrat.myapplication;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -16,7 +19,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -25,17 +38,35 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.simrat.myapplication.data.RideshareDbHelper;
+import com.simrat.myapplication.model.Ride;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TakeRide extends Fragment {
 
     public static final String TAG = "SampleActivityBase";
+    private String DEBUG_TAG = this.getClass().getName().toString();
     protected GoogleApiClient mGoogleApiClient;
     private PlaceAutocompleteAdapter mAdapter;
     private Calendar now;
@@ -47,6 +78,8 @@ public class TakeRide extends Fragment {
     private static final LatLngBounds BOUNDS_INDIA = new LatLngBounds(
             new LatLng(21.000000, 78.000000), new LatLng(21.000000, 78.000000));
     private Button next;
+    private RideshareDbHelper dbHelper;
+    String token;
 
     public TakeRide() {
 
@@ -60,6 +93,8 @@ public class TakeRide extends Fragment {
         View view = inflater.inflate(R.layout.fragment_offer_ride, container, false);
         findViews(view);
 
+        dbHelper = new RideshareDbHelper(getContext());
+        token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("AuthToken", "");
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
@@ -79,21 +114,6 @@ public class TakeRide extends Fragment {
 
         //Code to set up date time Dialogs
         setUpDateTimeText();
-
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                HashMap<String,String> ride_fields = new HashMap<>();
-                ride_fields.put("FROM", mAutocompleteViewSource.getText().toString());
-                ride_fields.put("TO", mAutocompleteViewDest.getText().toString());
-                ride_fields.put("DATETIME", datetime.getText().toString());
-                Bundle extras = new Bundle();
-                extras.putSerializable("RideFields", ride_fields);
-                Intent i = new Intent(getActivity(), PostRide.class);
-                i.putExtras(extras);
-                startActivity(i);
-            }
-        });
         return view;
     }
 
@@ -126,6 +146,127 @@ public class TakeRide extends Fragment {
         next = (Button) view.findViewById(R.id.next);
         next.setText("Search your Ride");
         next.setTypeface(MyApplication.getPt_sans());
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String from = mAutocompleteViewSource.getText().toString();
+                String to = mAutocompleteViewDest.getText().toString();
+                final String journey_datetime = datetime.getText().toString();
+                if(from.isEmpty() || to.isEmpty() || journey_datetime.isEmpty()){
+                    Toast.makeText(getContext(), "Please fill the details !", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.d(DEBUG_TAG, from + " " + to + " " + journey_datetime);
+                    final ProgressDialog pDialog = new ProgressDialog(getContext());
+                    pDialog.setMessage("Searching Your Ride ...");
+                    pDialog.show();
+                    SearchRideTask task = new SearchRideTask(pDialog);
+                    String url = "https://shielded-earth-6986.herokuapp.com/search_rides";
+                    RequestQueue queue = Volley.newRequestQueue(getContext());
+                    StringRequest request = new StringRequest(Request.Method.POST, url,
+                            new Response.Listener<String>()
+                            {
+                                @Override
+                                public void onResponse(String response) {
+                                    // response
+                                    Log.d(DEBUG_TAG, response);
+                                    pDialog.hide();
+                                }
+                            },
+                            new Response.ErrorListener()
+                            {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    // error
+                                    Log.d("Error.Response", error.getMessage());
+                                    pDialog.hide();
+                                }
+                            }
+                    ) {
+                        @Override
+                        protected Map<String, String> getParams()
+                        {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("source", from);
+                            params.put("journey_datetime", journey_datetime);
+                            params.put("auth_token", token);
+                            return params;
+                        }
+                    };
+                    queue.add(request);
+                    //task.execute(token, from, to, journey_datetime);
+                }
+            }
+        });
+    }
+    private class SearchRideTask extends AsyncTask<String, Void, Void> {
+        private ProgressDialog progressDialog;
+        private int responseCode;
+        private String response = "";
+        private String toast = "Invalid details.";
+
+        public SearchRideTask(ProgressDialog progressDialog){
+            this.progressDialog = progressDialog;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            URL url;
+            HttpURLConnection urlConnection;
+            dbHelper.getColumns();
+            try{
+
+                url = new URL("https://shielded-earth-6986.herokuapp.com/rides");
+                Log.d(DEBUG_TAG, url.toString());
+                String get_params = "source=" + params[1] + "destination=" + params[2] + "journey_datetime=" + params[3] +
+                        "auth_token=" + params[0];
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                urlConnection.setRequestProperty("Content-Length", "" + Integer.toString(get_params.getBytes().length));
+                urlConnection.setRequestProperty("Content-Language", "en-US");
+                urlConnection.setUseCaches(false);
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+                // Send request
+                DataOutputStream wr = new DataOutputStream(
+                        urlConnection.getOutputStream());
+                wr.writeBytes(get_params);
+                wr.flush();
+                wr.close();
+                // Get Response
+                InputStream is = urlConnection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuffer response = new StringBuffer();
+                while ((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('\r');
+                }
+                rd.close();
+                String responseStr = response.toString();
+                Log.d(DEBUG_TAG, responseStr);
+                urlConnection.disconnect();
+            }catch (MalformedURLException e){
+
+            }catch (IOException e){
+                Log.d(DEBUG_TAG, e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+
+        }
     }
     private void setUpDateTimeText(){
         datetime.setKeyListener(null);
